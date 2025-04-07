@@ -45,15 +45,33 @@ public class ChessModel {
     }
 
     private void setActiveSquares() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                if (board[i][j] == null ) {
-                    isActiveSquares[i][j] = false;
-                    continue;
+        if (!choiceState.isPieceChosen()){
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board.length; j++) {
+                    if (board[i][j] == null ) {
+                        isActiveSquares[i][j] = false;
+                        continue;
+                    }
+                    if (board[i][j].getPieceColor() == PieceColor.WHITE) isActiveSquares[i][j] = true;
                 }
-                if (board[i][j].getPieceColor() == PieceColor.WHITE) isActiveSquares[i][j] = true;
             }
         }
+        else {
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board.length; j++) {
+                    
+                    isActiveSquares[i][j] = false;
+
+                }
+            }
+            isActiveSquares[choiceState.getChosenSquare().getRow()][choiceState.getChosenSquare().getCol()] = true;
+        }
+    }
+
+    private void movePiece(Square from, Square to){
+        Piece piece = board[from.getRow()][from.getCol()];
+        board[to.getRow()][to.getCol()] = piece;
+        board[from.getRow()][from.getCol()] = null;
     }
 
 }
