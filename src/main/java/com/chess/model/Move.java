@@ -3,10 +3,12 @@ package com.chess.model;
 public class Move {
     private final Square from;
     private final Square to;
+    private final GameState gameState;
 
-    public Move(Square from, Square to){
+    public Move(Square from, Square to, GameState gameState){
         this.from = from;
         this.to = to;
+        this.gameState = gameState;
     }
 
     public Square getFrom() {
@@ -15,6 +17,10 @@ public class Move {
 
     public Square getTo() {
         return to;
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 
     @Override
