@@ -13,8 +13,24 @@ public class Square {
     public int getRow(){
         return row;
     }
-    public boolean isEqual(Square s2){
-        return this.col == s2.getCol() && this.row == s2.getRow();
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Square other = (Square) obj;
+        return row == other.row && col == other.col;
     }
+
+    @Override
+    public int hashCode() {
+        return 31 * row + col;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + row + ", " + col + ")";
+    }
+
+    
 
 }

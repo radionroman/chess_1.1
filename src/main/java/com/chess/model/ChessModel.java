@@ -1,77 +1,117 @@
 package com.chess.model;
 
+import java.util.*;
+
 import com.chess.model.pieces.*;
 public class ChessModel {
 
-    private Piece[][] board;
-    private boolean[][] isActiveSquares;
-    private PieceColor turnColor;
-    private ChoiceState choiceState;
 
+
+    private Piece[][] board;
+    private boolean[][] isSelectableSquares;
+    private PieceColor turnColor;
+    private SelectionState choiceState; 
+    private Queue<Move> moveHistory = new LinkedList<>();
     public ChessModel(){
         this.board = boardInit();
-        isActiveSquares = new boolean[8][8];
+        isSelectableSquares = new boolean[8][8];
         turnColor = PieceColor.WHITE;
-        setActiveSquares();
-        choiceState = new ChoiceState();
+        choiceState = new SelectionState();
+        setSelectablePieces();
+    }
+
+
+    public ChessModel clone(){
+        return new ChessModel();
     }
 
     private Piece[][] boardInit(){
         Piece[][] board = new Piece[8][8];
+        PieceType[] order = new PieceType[]{
+            PieceType.ROOK, 
+            PieceType.KNIGHT, 
+            PieceType.BISHOP, 
+            PieceType.QUEEN, 
+            PieceType.KING, 
+            PieceType.BISHOP, 
+            PieceType.KNIGHT, 
+            PieceType.ROOK, 
+        };
         for (int i = 0; i < board.length; i++) {
-            board[1][i] = new Pawn(PieceColor.WHITE);
-            board[6][i] = new Pawn(PieceColor.BLACK);
-         }
+            board[0][i] = PieceFactory.createPiece(order[7-i], PieceColor.BLACK);
+            board[1][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.BLACK);
+            board[6][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.WHITE);
+            board[7][i] = PieceFactory.createPiece(order[i], PieceColor.WHITE);
+        }
         return board;
     }
 
     public void processBoardClicked(int row, int col){
         Square clickedSquare = new Square(row, col);
-        if (choiceState.isPieceChosen()) {
-            if (!clickedSquare.isEqual(choiceState.getChosenSquare())){
-                movePiece(choiceState.getChosenSquare(), clickedSquare);
+        if (choiceState.isPieceSelected()) {
+            if (!clickedSquare.equals(choiceState.getSelectedSquare())){
+                Move move = new Move(choiceState.getSelectedSquare(), clickedSquare);
+                moveHistory.add(move);
+                System.out.println(move);
+                movePiece(move); 
             }
-            choiceState.setChoice(null);
+            choiceState.setSelection(null); 
+            setSelectablePieces();
         }
         else {
-            choiceState.setChoice(clickedSquare);
+            choiceState.setSelection(clickedSquare);
+            setMovesForSelectedPiece();
         }
-    }
 
-    public BoardState getBoardState(){
         
-
-        return new BoardState(isActiveSquares, board);
     }
 
-    private void setActiveSquares() {
-        if (!choiceState.isPieceChosen()){
+    public void undo(){
+        System.out.println("undo(cant)");
+    }
+
+    public SteamrolledGameState getBoardState(){
+        return new SteamrolledGameState(isSelectableSquares, board);
+    }
+
+    private void setSelectablePieces(){
+        if (!choiceState.isPieceSelected()){
             for (int i = 0; i < board.length; i++) {
                 for (int j = 0; j < board.length; j++) {
                     if (board[i][j] == null ) {
-                        isActiveSquares[i][j] = false;
+                        isSelectableSquares[i][j] = false;
                         continue;
                     }
-                    if (board[i][j].getPieceColor() == PieceColor.WHITE) isActiveSquares[i][j] = true;
+                    isSelectableSquares[i][j] = board[i][j].getPieceColor() == turnColor;
+                    
                 }
             }
         }
-        else {
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board.length; j++) {
-                    
-                    isActiveSquares[i][j] = false;
+    }
+    private void setMovesForSelectedPiece(){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                
+                isSelectableSquares[i][j] = false;
 
-                }
             }
-            isActiveSquares[choiceState.getChosenSquare().getRow()][choiceState.getChosenSquare().getCol()] = true;
+        }
+        isSelectableSquares[choiceState.getSelectedSquare().getRow()][choiceState.getSelectedSquare().getCol()] = true;
+        List<Square> legalMoves = board[choiceState.getSelectedSquare().getRow()][choiceState.getSelectedSquare().getCol()].getLegalMoves(board, choiceState.getSelectedSquare().getRow(), choiceState.getSelectedSquare().getCol());
+        for (Square square : legalMoves) {
+            isSelectableSquares[square.getRow()][square.getCol()] = true;
         }
     }
 
-    private void movePiece(Square from, Square to){
+    private void movePiece(Move move){
+
+        Square from = move.getFrom();
+        Square to = move.getTo();
         Piece piece = board[from.getRow()][from.getCol()];
         board[to.getRow()][to.getCol()] = piece;
         board[from.getRow()][from.getCol()] = null;
+        if (turnColor == PieceColor.WHITE) turnColor = PieceColor.BLACK;
+        else turnColor = PieceColor.WHITE; 
     }
 
 }

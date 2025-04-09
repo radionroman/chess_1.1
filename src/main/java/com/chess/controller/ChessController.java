@@ -10,15 +10,24 @@ public class ChessController {
     public ChessController( ChessModel model,ChessView view){
         this.model = model;
         this.view = view;
-        view.setBoardClickedListeners((row,col) -> {handleClick(row, col);});
+        view.setBoardClickedListeners((row,col) -> {handleClickBoard(row, col);});
+        view.setControlClickedListener((type) -> handleClickControl(type));
         view.refresh(model.getBoardState());
     }
 
-    private void handleClick(int row, int col){
-        System.out.println(row + " " + col);
+    private void handleClickBoard(int row, int col){
         model.processBoardClicked(row, col); 
         view.refresh(model.getBoardState());
     }
+    private void handleClickControl(String type){
+        System.out.println(type);
+        switch (type){
+            case "Undo" -> model.undo();
+            default -> throw new IllegalArgumentException("Unknown piece type: " + type);
+        }
+       
+    }
+    
 
     
 

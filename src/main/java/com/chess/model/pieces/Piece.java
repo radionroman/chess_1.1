@@ -9,10 +9,11 @@ import com.chess.model.*;
 
 public abstract class Piece {
     private final PieceColor color;
+    private final PieceType type;
     private String symbol;
-    private List<Square> legalMoves;
-    public Piece(PieceColor color){
+    public Piece(PieceColor color, PieceType type){
         this.color = color;
+        this.type = type;
     }
 
     public void setChar(String c){
@@ -23,21 +24,27 @@ public abstract class Piece {
         return symbol;
     }
 
+    public String getUnicodeSymbol() {
+        return switch (this.getClass().getSimpleName()) {
+            case "Pawn"   -> getPieceColor() == PieceColor.WHITE ? "♙" : "♟";
+            case "Rook"   -> getPieceColor() == PieceColor.WHITE ? "♖" : "♜";
+            case "Knight" -> getPieceColor() == PieceColor.WHITE ? "♘" : "♞";
+            case "Bishop" -> getPieceColor() == PieceColor.WHITE ? "♗" : "♝";
+            case "Queen"  -> getPieceColor() == PieceColor.WHITE ? "♕" : "♛";
+            case "King"   -> getPieceColor() == PieceColor.WHITE ? "♔" : "♚";
+            default       -> " ";
+        };
+    }
+
     public PieceColor getPieceColor(){
         return color;
     }
 
-    public List<Square> getLegalMoves(){
-        return legalMoves;
+    public abstract List<Square> getLegalMoves(Piece[][] board, int row, int col);
+
+
+    protected boolean isInsideBoard(int r, int c){
+        return r >= 0 && c >= 0 && r < 8 && c < 8; 
     }
-
-    public void setLegalMoves(List<Square> moves){
-        legalMoves = moves;
-    }
-
-    public void updateLegalMoves(Piece[][] board, int row, int col) {
-
-    }
-
 
 }
