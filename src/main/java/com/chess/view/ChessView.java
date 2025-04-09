@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import javax.swing.*;
 
-import com.chess.model.SteamrolledGameState;
+import com.chess.model.RenderState;
 
 public class ChessView extends JFrame{
     private JPanel boardPanel;
@@ -69,7 +69,7 @@ public class ChessView extends JFrame{
         }
     }
 
-    public void refresh(SteamrolledGameState boardState){
+    public void refresh(RenderState boardState){
         String[][] board = boardState.getBoard();
         boolean[][] isActiveSquares = boardState.getSquaresActive();
         for (int i = 0; i < board.length; i++) {

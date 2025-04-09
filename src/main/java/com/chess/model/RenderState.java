@@ -2,11 +2,11 @@ package com.chess.model;
 
 import com.chess.model.pieces.Piece;
 
-public class SteamrolledGameState {
+public class RenderState {
     private final boolean[][] squaresActive;
     private final String[][] board;
 
-    public SteamrolledGameState(boolean[][] squaresActive, Piece[][] board) {
+    public RenderState(boolean[][] squaresActive, Piece[][] board) {
         this.squaresActive = squaresActive;
         String[][] tempBoard = new String[8][8];
         for (int i = 0; i < tempBoard.length; i++) {

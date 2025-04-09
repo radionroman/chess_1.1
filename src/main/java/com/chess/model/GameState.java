@@ -7,9 +7,9 @@ import com.chess.model.pieces.PieceType;
 
 public class GameState {
     private Piece[][] board;
-    private boolean[][] isSelectableSquares= new boolean[8][8];;
+    private boolean[][] isSelectableSquares= new boolean[8][8];
     private PieceColor turnColor;
-    private SelectionState selectionState = new SelectionState();; 
+    private Optional<Square> selectedSquare = Optional.empty();
 
     public GameState() {
         board = boardInit();
@@ -55,7 +55,7 @@ public class GameState {
     }
 
     public void setSelectablePieces(){
-        if (!selectionState.isPieceSelected()){
+        if (!selectedSquare.isPresent()){
             for (int i = 0; i < board.length; i++) {
                 for (int j = 0; j < board.length; j++) {
                     if (board[i][j] == null ) {
@@ -76,8 +76,8 @@ public class GameState {
 
             }
         }
-        isSelectableSquares[selectionState.getSelectedSquare().getRow()][selectionState.getSelectedSquare().getCol()] = true;
-        List<Square> legalMoves = board[selectionState.getSelectedSquare().getRow()][selectionState.getSelectedSquare().getCol()].getLegalMoves(board, selectionState.getSelectedSquare().getRow(), selectionState.getSelectedSquare().getCol());
+        isSelectableSquares[selectedSquare.get().getRow()][selectedSquare.get().getCol()] = true;
+        List<Square> legalMoves = board[selectedSquare.get().getRow()][selectedSquare.get().getCol()].getLegalMoves(board, selectedSquare.get().getRow(), selectedSquare.get().getCol());
         for (Square square : legalMoves) {
             isSelectableSquares[square.getRow()][square.getCol()] = true;
         }
@@ -88,10 +88,15 @@ public class GameState {
         Square from = move.getFrom();
         Square to = move.getTo();
         Piece piece = board[from.getRow()][from.getCol()];
+        if (!piece.getLegalMoves(board, from.getRow(), from.getCol()).contains(to)){
+            System.out.println("Illegal move attempted!");
+            return;
+        }
         board[to.getRow()][to.getCol()] = piece;
         board[from.getRow()][from.getCol()] = null;
         if (turnColor == PieceColor.WHITE) turnColor = PieceColor.BLACK;
         else turnColor = PieceColor.WHITE; 
+        
     }
 
 
@@ -114,8 +119,15 @@ public class GameState {
 
 
 
-    public SelectionState getSelectionState() {
-        return selectionState;
+    public Optional<Square> getSelectedSquare() {
+        return selectedSquare;
     }
+    public void setSelectedSquare(Square square) {
+        selectedSquare = Optional.of(square);
+    }    
+    public void clearSelectedSquare() {
+        selectedSquare = Optional.empty();
+    }
+    
 
 }
