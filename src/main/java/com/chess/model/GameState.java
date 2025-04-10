@@ -1,36 +1,35 @@
 package com.chess.model;
 
 import java.util.*;
+
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.PieceFactory;
 import com.chess.model.pieces.PieceType;
 
 public class GameState {
     private Piece[][] board;
-    private boolean[][] isSelectableSquares= new boolean[8][8];
     private PieceColor turnColor;
-    private Optional<Square> selectedSquare = Optional.empty();
+
 
     public GameState() {
         board = boardInit();
         turnColor = PieceColor.WHITE;
-        setSelectablePieces();
     }
 
     public GameState(Piece[][] board, PieceColor turnColor) {
         this.board = new Piece[8][8];
         for (int i = 0; i < board.length; i++) {
-            this.board[i] = board[i].clone();
+            for (int j = 0; j < board.length; j++) {
+                this.board[i][j] = board[i][j] == null ? null : board[i][j].copy();
+            }
         }
         this.turnColor = turnColor;
-        setSelectablePieces();
     }
 
     public GameState copy() {
         GameState gameStateCopy = new GameState(board, turnColor);
         return gameStateCopy;
     }
-
 
 
     private Piece[][] boardInit(){
@@ -54,80 +53,89 @@ public class GameState {
         return board;
     }
 
-    public void setSelectablePieces(){
-        if (!selectedSquare.isPresent()){
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board.length; j++) {
-                    if (board[i][j] == null ) {
-                        isSelectableSquares[i][j] = false;
-                        continue;
-                    }
-                    isSelectableSquares[i][j] = board[i][j].getPieceColor() == turnColor;
-                    
-                }
-            }
-        }
-    }
-    public void setMovesForSelectedPiece(){
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                
-                isSelectableSquares[i][j] = false;
-
-            }
-        }
-        isSelectableSquares[selectedSquare.get().getRow()][selectedSquare.get().getCol()] = true;
-        List<Square> legalMoves = board[selectedSquare.get().getRow()][selectedSquare.get().getCol()].getLegalMoves(board, selectedSquare.get().getRow(), selectedSquare.get().getCol());
-        for (Square square : legalMoves) {
-            isSelectableSquares[square.getRow()][square.getCol()] = true;
-        }
-    }
 
     public void movePiece(Move move){
 
         Square from = move.getFrom();
         Square to = move.getTo();
         Piece piece = board[from.getRow()][from.getCol()];
-        if (!piece.getLegalMoves(board, from.getRow(), from.getCol()).contains(to)){
-            System.out.println("Illegal move attempted!");
-            return;
-        }
+
         board[to.getRow()][to.getCol()] = piece;
         board[from.getRow()][from.getCol()] = null;
         if (turnColor == PieceColor.WHITE) turnColor = PieceColor.BLACK;
         else turnColor = PieceColor.WHITE; 
+        if(isCheckPresent()){
+            System.out.println("The " + turnColor + "king is in check!");
+            processCheck();
+        }
         
     }
 
 
+    // Game rules
+    private boolean isCheckPresent(){
+        Square kingSquare = null;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] == null) continue;
+                if (board[i][j].getPieceColor() != turnColor) continue;
+                if (board[i][j].getPieceType() == PieceType.KING) {
+                    kingSquare = new Square(i, j);
+                }
+            }
+        }
 
+        List<PieceOnSquare> enemyPieces = getPiecesOnSquare(turnColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE);
+        for (PieceOnSquare pieceOnSquare : enemyPieces) {
+            if (pieceOnSquare.getLegalMovesTo(board).contains(kingSquare)) return true;
+        }
+        return false;
+    }
+
+    private void processCheck() {
+        
+    }
+
+    // Basic Getters
     public Piece[][] getBoard() {
         return board;
     }
-
-
-
-    public boolean[][] getIsSelectableSquares() {
-        return isSelectableSquares;
-    }
-
 
 
     public PieceColor getTurnColor() {
         return turnColor;
     }
 
+    // Advanced getters
+    public List<PieceOnSquare> getPiecesOnSquare(PieceColor color) {
+        ArrayList<PieceOnSquare> pieces = new ArrayList<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] == null) continue;
+                if (board[i][j].getPieceColor() != color) continue;
+                pieces.add(new PieceOnSquare(board[i][j], new Square(i, j)));
+            }
+        }
+        return pieces;
+    }
+
+    public List<Move> getLegalMovesForColor(PieceColor color) {
+        ArrayList<Move> moves = new ArrayList<>();
+        List<Move> pieceMoves = null;
+        List<PieceOnSquare> pieces = getPiecesOnSquare(color);
+        for (PieceOnSquare pieceOnSquare : pieces) {
+            pieceMoves = pieceOnSquare.getLegalMoves(board, this);
+            for (Move pieceMove: pieceMoves) {
+                moves.add(pieceMove);
+            }
+        }
+        return moves;
+    }
 
 
-    public Optional<Square> getSelectedSquare() {
-        return selectedSquare;
-    }
-    public void setSelectedSquare(Square square) {
-        selectedSquare = Optional.of(square);
-    }    
-    public void clearSelectedSquare() {
-        selectedSquare = Optional.empty();
-    }
-    
+
+
+
+
 
 }

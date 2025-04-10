@@ -20,6 +20,14 @@ public abstract class Piece {
         symbol = c;
     }
 
+    public PieceType getPieceType(){
+        return type;
+    }
+
+    public Piece copy(){
+        return PieceFactory.createPiece(type, color);
+    }
+
     public String getChar(){
         return symbol;
     }

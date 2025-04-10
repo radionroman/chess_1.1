@@ -18,15 +18,14 @@ public class ChessController {
         view.setBoardClickedListeners((row,col) -> {handleClickBoard(row, col);});
         view.setControlClickedListener((type) -> handleClickControl(type));
         view.refresh(model.getBoardState());
-        model.setController(this);
         whitePlayer = new HumanPlayer();
-        blackPlayer = new HumanPlayer();
+        blackPlayer = new BotPlayer();
         nextTurn();
     }
 
     private void nextTurn(){
         Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
-        System.out.println("Next turn called");
+        System.out.println("Next turn called " + model.getTurnColor());
         current.requestMove(model, (move) -> {
             model.applyMove(move);
             view.refresh(model.getBoardState());
@@ -40,7 +39,8 @@ public class ChessController {
 
 
     private void handleClickBoard(int row, int col){
-        model.processBoardClicked(row, col); 
+        Move move = model.processBoardClicked(row, col);
+        if(move != null)whitePlayer.onUserMove(move);
         view.refresh(model.getBoardState());
 
     }
