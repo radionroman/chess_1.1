@@ -1,7 +1,6 @@
 package com.chess.model;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.PieceFactory;
@@ -60,7 +59,6 @@ public class GameState {
         Square from = move.getFrom();
         Square to = move.getTo();
         Piece piece = board[from.getRow()][from.getCol()];
-
         board[to.getRow()][to.getCol()] = piece;
         board[from.getRow()][from.getCol()] = null;
         if (turnColor == PieceColor.WHITE) turnColor = PieceColor.BLACK;
@@ -130,7 +128,7 @@ public class GameState {
     }
 
     public List<Move> getLegalMovesForColor(PieceColor color) {
-        List<Move> pseudoLegalMoves = getLegalMovesForColor(color);
+        List<Move> pseudoLegalMoves = getPseudoLegalMovesForColor(color);
         ArrayList<Move> legalMoves = new ArrayList<>();
 
         for (Move move : pseudoLegalMoves) {

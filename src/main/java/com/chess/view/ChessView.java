@@ -86,7 +86,6 @@ public class ChessView extends JFrame{
         if (lastMove != null) {
             squares[lastMove[0][0]][lastMove[0][1]].setBorder(new LineBorder(Color.RED, 4));
             squares[lastMove[1][0]][lastMove[1][1]].setBorder(new LineBorder(Color.RED, 4));
-            System.out.println("Border set");
         }
         
     }
