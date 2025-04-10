@@ -31,7 +31,8 @@ public class ChessView extends JFrame{
             for (int j = 0; j < 8; j++) {
                 JButton button = new JButton();
                 button.setFocusPainted(false);
-                button.setFont(new Font("SansSerif", Font.BOLD, 36)); // Big for Unicode pieces
+                button.setFont(new Font("SansSerif", Font.BOLD, 52)); // Big for Unicode pieces
+                button.setRolloverEnabled(true);
                 button.setBackground((i + j) % 2 == 0 ? lightSquare : darkSquare);
                 button.setForeground(Color.BLACK);
                 button.setOpaque(true);

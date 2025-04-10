@@ -48,6 +48,8 @@ public class ChessController {
         switch (type){
             case "Undo" -> {
                 model.undo();
+                model.undo();
+                if (model.getTurnColor() == PieceColor.BLACK) nextTurn();
             }
 
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);

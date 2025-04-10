@@ -8,6 +8,7 @@ public class ChessModel {
     private GameState gameState;
     private boolean[][] isSelectableSquares= new boolean[8][8];
     private Optional<Square> selectedSquare = Optional.empty();
+
     public ChessModel(){
         gameState = new GameState();
         
@@ -45,7 +46,8 @@ public class ChessModel {
         if (moveHistory.empty()) return;
         previousMove = moveHistory.pop();
         System.out.println("Undoing: " + previousMove);
-        gameState = previousMove.getGameState();
+        this.gameState = previousMove.getGameState().copy();
+        clearSelectedSquare();
 
     }
 
@@ -61,13 +63,14 @@ public class ChessModel {
     public Optional<Square> getSelectedSquare() {
         return selectedSquare;
     }
+
     public void setSelectedSquare(Square square) {
         selectedSquare = Optional.of(square);
     }    
+
     public void clearSelectedSquare() {
         selectedSquare = Optional.empty();
     }
-
     
     public boolean[][] getIsSelectableSquares() {
         return isSelectableSquares;

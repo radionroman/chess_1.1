@@ -65,7 +65,6 @@ public class GameState {
         else turnColor = PieceColor.WHITE; 
         if(isCheckPresent(turnColor)){
             System.out.println("The " + turnColor + "king is in check!");
-            processCheck();
         }
         
     }
@@ -87,9 +86,6 @@ public class GameState {
         return false;
     }
 
-    private void processCheck() {
-
-    }
 
     // Basic Getters
     public Piece[][] getBoard() {

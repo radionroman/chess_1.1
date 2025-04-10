@@ -28,7 +28,6 @@ public class RenderState {
 
         if (!selectedSquare.isPresent()) {
             for (Move move : legalMoves) {
-                System.out.println(move);
                 squaresActive[move.getFrom().getRow()][move.getFrom().getCol()] = true;
             }
         }
