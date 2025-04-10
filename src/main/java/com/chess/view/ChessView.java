@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 import com.chess.model.RenderState;
 
@@ -30,7 +31,6 @@ public class ChessView extends JFrame{
             for (int j = 0; j < 8; j++) {
                 JButton button = new JButton();
                 button.setFocusPainted(false);
-                button.setBorderPainted(false);
                 button.setFont(new Font("SansSerif", Font.BOLD, 36)); // Big for Unicode pieces
                 button.setBackground((i + j) % 2 == 0 ? lightSquare : darkSquare);
                 button.setForeground(Color.BLACK);
@@ -72,13 +72,21 @@ public class ChessView extends JFrame{
     public void refresh(RenderState boardState){
         String[][] board = boardState.getBoard();
         boolean[][] isActiveSquares = boardState.getSquaresActive();
+        int[][] lastMove = boardState.getLastMove();
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 squares[i][j].setText(board[i][j]);
                 squares[i][j].setEnabled(isActiveSquares[i][j]);
+                squares[i][j].setBorder(BorderFactory.createEmptyBorder());
                 if(isActiveSquares[i][j])squares[i][j].setBackground((i + j) % 2 == 0 ? hLightSquare : hDarkSquare);
                 else squares[i][j].setBackground((i + j) % 2 == 0 ? lightSquare : darkSquare);
             }
+        }
+
+        if (lastMove != null) {
+            squares[lastMove[0][0]][lastMove[0][1]].setBorder(new LineBorder(Color.RED, 4));
+            squares[lastMove[1][0]][lastMove[1][1]].setBorder(new LineBorder(Color.RED, 4));
+            System.out.println("Border set");
         }
         
     }

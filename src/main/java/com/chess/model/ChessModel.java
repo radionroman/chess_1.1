@@ -2,7 +2,6 @@ package com.chess.model;
 
 import java.util.*;
 
-import com.chess.controller.ChessController;
 import com.chess.model.pieces.Piece;
 public class ChessModel {
     private Stack<Move> moveHistory = new Stack<>();
@@ -22,10 +21,9 @@ public class ChessModel {
                 Piece[][] board = gameState.getBoard();
                 Piece piece = board[selectedSquare.get().getRow()][selectedSquare.get().getCol()];
                 if (piece == null) return move;
-                System.out.println(piece.getLegalMoves(board, row, col));
-                if (!piece.getLegalMoves(board, selectedSquare.get().getRow(), selectedSquare.get().getCol()).contains(clickedSquare)) return move;
+                
                 move = new Move(selectedSquare.get(), clickedSquare, gameState.copy());
-                moveHistory.push(move);
+                
                 
                 
             }
@@ -42,6 +40,7 @@ public class ChessModel {
 
     public void applyMove(Move move){
         gameState.movePiece(move);
+        moveHistory.push(move);
         setSelectablePieces(gameState );
     }
 
@@ -53,9 +52,9 @@ public class ChessModel {
         Move previousMove;
         if (moveHistory.empty()) return;
         previousMove = moveHistory.pop();
-
         System.out.println("Undoing: " + previousMove);
         gameState = previousMove.getGameState();
+
     }
 
     public GameState getGameState(){
@@ -63,7 +62,7 @@ public class ChessModel {
     }
 
     public RenderState getBoardState(){
-        return new RenderState(isSelectableSquares, gameState.getBoard());
+        return new RenderState(gameState.getLegalMovesForColor(gameState.getTurnColor()), gameState.getBoard(), moveHistory.empty() ? null : moveHistory.peek());
     }
 
     public void setSelectablePieces(GameState gameState){

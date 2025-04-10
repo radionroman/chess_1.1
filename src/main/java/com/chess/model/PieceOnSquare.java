@@ -27,4 +27,12 @@ public class PieceOnSquare {
         }
         return moves;
     }
+
+    public Piece getPiece() {
+        return piece;
+    }
+
+    public Square getSquare() {
+        return square;
+    }
 }

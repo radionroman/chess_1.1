@@ -46,7 +46,10 @@ public class ChessController {
     }
     private void handleClickControl(String type){
         switch (type){
-            case "Undo" -> model.undo();
+            case "Undo" -> {
+                model.undo();
+            }
+
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);
         }
         view.refresh(model.getBoardState());
