@@ -1,7 +1,7 @@
 package com.chess.model;
 
 public class Square {
-    private int row, col;
+    private final int row, col;
     public Square(int row, int col){
         this.row = row;
         this.col = col;

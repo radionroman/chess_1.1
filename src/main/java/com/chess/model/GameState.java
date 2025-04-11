@@ -1,13 +1,14 @@
 package com.chess.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.PieceFactory;
 import com.chess.model.pieces.PieceType;
 
 public class GameState {
-    private Piece[][] board;
+    private final Piece[][] board;
     private PieceColor turnColor;
 
 
@@ -33,7 +34,7 @@ public class GameState {
 
 
     private Piece[][] boardInit(){
-        Piece[][] board = new Piece[8][8];
+        Piece[][] tempBoard = new Piece[8][8];
         PieceType[] order = new PieceType[]{
             PieceType.ROOK, 
             PieceType.KNIGHT, 
@@ -44,13 +45,13 @@ public class GameState {
             PieceType.KNIGHT, 
             PieceType.ROOK, 
         };
-        for (int i = 0; i < board.length; i++) {
-            board[0][i] = PieceFactory.createPiece(order[7-i], PieceColor.BLACK);
-            board[1][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.BLACK);
-            board[6][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.WHITE);
-            board[7][i] = PieceFactory.createPiece(order[i], PieceColor.WHITE);
+        for (int i = 0; i < tempBoard.length; i++) {
+            tempBoard[0][i] = PieceFactory.createPiece(order[7-i], PieceColor.BLACK);
+            tempBoard[1][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.BLACK);
+            tempBoard[6][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.WHITE);
+            tempBoard[7][i] = PieceFactory.createPiece(order[i], PieceColor.WHITE);
         }
-        return board;
+        return tempBoard;
     }
 
 
@@ -63,8 +64,9 @@ public class GameState {
         board[from.getRow()][from.getCol()] = null;
         if (turnColor == PieceColor.WHITE) turnColor = PieceColor.BLACK;
         else turnColor = PieceColor.WHITE; 
+        
         if(isCheckPresent(turnColor)){
-            System.out.println("The " + turnColor + "king is in check!");
+            System.out.println("The " + turnColor + " king is in check!");
         }
         
     }
@@ -80,6 +82,7 @@ public class GameState {
             }
         }
         List<PieceOnSquare> enemyPieces = getPiecesOnSquare(color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE);
+        if (king == null) return false;
         for (PieceOnSquare pieceOnSquare : enemyPieces) {
             if (pieceOnSquare.getLegalMovesTo(board).contains(king.getSquare())) return true;
         }
@@ -112,7 +115,7 @@ public class GameState {
 
     public List<Move> getPseudoLegalMovesForColor(PieceColor color) {
         ArrayList<Move> moves = new ArrayList<>();
-        List<Move> pieceMoves = null;
+        List<Move> pieceMoves;
         List<PieceOnSquare> pieces = getPiecesOnSquare(color);
         for (PieceOnSquare pieceOnSquare : pieces) {
             pieceMoves = pieceOnSquare.getLegalMoves(board, this);

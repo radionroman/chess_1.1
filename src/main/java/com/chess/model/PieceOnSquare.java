@@ -6,8 +6,8 @@ import java.util.List;
 import com.chess.model.pieces.Piece;
 
 public class PieceOnSquare {
-    private Piece piece;
-    private Square square;
+    private final Piece piece;
+    private final Square square;
     
 
     public PieceOnSquare(Piece piece, Square square) {

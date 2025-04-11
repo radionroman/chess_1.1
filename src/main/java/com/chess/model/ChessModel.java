@@ -1,12 +1,13 @@
 package com.chess.model;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Stack;
 
 import com.chess.model.pieces.Piece;
 public class ChessModel {
-    private Stack<Move> moveHistory = new Stack<>();
+    private final Stack<Move> moveHistory = new Stack<>();
     private GameState gameState;
-    private boolean[][] isSelectableSquares= new boolean[8][8];
+    private final boolean[][] isSelectableSquares= new boolean[8][8];
     private Optional<Square> selectedSquare = Optional.empty();
 
     public ChessModel(){

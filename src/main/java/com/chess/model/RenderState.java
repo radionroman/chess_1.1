@@ -22,26 +22,23 @@ public class RenderState {
             {lastMove.getFrom().getRow(),lastMove.getFrom().getCol() },
             {lastMove.getTo().getRow(),lastMove.getTo().getCol() },
         };
-        boolean[][] squaresActive = new boolean[8][8];
-
-
-
+        boolean[][] tempSquaresActive = new boolean[8][8];
         if (!selectedSquare.isPresent()) {
             for (Move move : legalMoves) {
-                squaresActive[move.getFrom().getRow()][move.getFrom().getCol()] = true;
+                tempSquaresActive[move.getFrom().getRow()][move.getFrom().getCol()] = true;
             }
         }
         else {
             for (Move move : legalMoves) {
                 if (move.getFrom().equals(selectedSquare.get()) ) {
-                    squaresActive[move.getTo().getRow()][move.getTo().getCol()] = true;
+                    tempSquaresActive[move.getTo().getRow()][move.getTo().getCol()] = true;
                 }
             }
-            squaresActive[selectedSquare.get().getRow()][selectedSquare.get().getCol()] = true;
+            tempSquaresActive[selectedSquare.get().getRow()][selectedSquare.get().getCol()] = true;
         }
 
         this.board = tempBoard;
-        this.squaresActive = squaresActive;
+        this.squaresActive = tempSquaresActive;
     }
 
     public boolean[][] getSquaresActive() {
