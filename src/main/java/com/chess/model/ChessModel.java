@@ -1,5 +1,7 @@
 package com.chess.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 
@@ -19,13 +21,15 @@ public class ChessModel {
     public Move processBoardClicked(int row, int col) {
         Square clickedSquare = new Square(row, col);
         Move move = null;
+        List<Move> moves;
         if (selectedSquare.isPresent()) {
             if (!clickedSquare.equals(selectedSquare.get())) {
                 Piece[][] board = gameState.getBoard();
                 Piece piece = board[selectedSquare.get().getRow()][selectedSquare.get().getCol()];
                 if (piece == null)
                     return move;
-                move = new Move(selectedSquare.get(), clickedSquare, gameState.copy());
+                moves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+                userMoved(moves.get(0));
             }
             clearSelectedSquare();
         } else {

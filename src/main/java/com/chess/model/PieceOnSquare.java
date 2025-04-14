@@ -23,7 +23,7 @@ public class PieceOnSquare {
         List<Square> movesTo = piece.getLegalMoves(board, square.getRow(), square.getCol());
         ArrayList<Move> moves = new ArrayList<>();
         for (Square squareTo : movesTo) {
-            moves.add(new Move(square, squareTo, gameState));
+            moves.add(new Move(square, squareTo, gameState, MoveType.DEFAULT));
         }
         return moves;
     }

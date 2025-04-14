@@ -14,7 +14,8 @@ public class ChessController {
     private final ChessView view;
     private final ChessModel model;
     private HumanPlayer whitePlayer = new HumanPlayer();
-    private Player blackPlayer = new BotPlayerMinimax();
+    private HumanPlayer blackPlayer = new HumanPlayer();
+    // private Player blackPlayer = new BotPlayerMinimax();
 
     public ChessController(ChessModel model, ChessView view) {
         this.model = model;
@@ -71,33 +72,15 @@ public class ChessController {
         if (move != null)
             userMoved(move);
         view.refresh(model.getBoardState(true));
+
     }
 
     private void handleClickControl(String type) {
+        Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
         switch (type) {
             case "Undo" -> {
                 model.undo();
                 model.undo();
-                if (model.getTurnColor() == PieceColor.BLACK)
-                    nextTurn();
-            }
-
-            case "PVP" -> {
-                whitePlayer = new HumanPlayer();
-                blackPlayer = new HumanPlayer();
-
-            }
-            case "PVE_RANDOM_WHITE" -> {
-
-                whitePlayer = new HumanPlayer();
-                blackPlayer = new BotPlayerRandom();
-
-            }
-            case "PVE_RANDOM_BLACK" -> {
-
-                whitePlayer = new HumanPlayer();
-                blackPlayer = new BotPlayerRandom();
-
             }
 
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);

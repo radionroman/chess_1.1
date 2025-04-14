@@ -10,13 +10,14 @@ import com.chess.model.pieces.PieceType;
 public class GameState {
     private final Piece[][] board;
     private PieceColor turnColor;
+    private Move lastMove = null;
 
     public GameState() {
         board = boardInit();
         turnColor = PieceColor.WHITE;
     }
 
-    public GameState(Piece[][] board, PieceColor turnColor) {
+    public GameState(Piece[][] board, PieceColor turnColor, Move lastMove) {
         this.board = new Piece[8][8];
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
@@ -24,10 +25,11 @@ public class GameState {
             }
         }
         this.turnColor = turnColor;
+        this.lastMove = lastMove;
     }
 
     public GameState copy() {
-        GameState gameStateCopy = new GameState(board, turnColor);
+        GameState gameStateCopy = new GameState(board, turnColor, lastMove);
         return gameStateCopy;
     }
 
@@ -44,7 +46,7 @@ public class GameState {
                 PieceType.ROOK,
         };
         for (int i = 0; i < tempBoard.length; i++) {
-            tempBoard[0][i] = PieceFactory.createPiece(order[7 - i], PieceColor.BLACK);
+            tempBoard[0][i] = PieceFactory.createPiece(order[i], PieceColor.BLACK);
             tempBoard[1][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.BLACK);
             tempBoard[6][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.WHITE);
             tempBoard[7][i] = PieceFactory.createPiece(order[i], PieceColor.WHITE);
@@ -53,20 +55,66 @@ public class GameState {
     }
 
     public void movePiece(Move move) {
-
+        lastMove = move;
         Square from = move.getFrom();
         Square to = move.getTo();
         Piece piece = board[from.getRow()][from.getCol()];
-        board[to.getRow()][to.getCol()] = piece;
-        board[from.getRow()][from.getCol()] = null;
+        MoveType type = move.getType();
+        piece.setHasMoved();
+        switch (type) {
+            case DEFAULT -> {
+                board[to.getRow()][to.getCol()] = piece;
+                board[from.getRow()][from.getCol()] = null;
+
+            }
+            case PROMOTION_QUEEN -> {
+                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.QUEEN, turnColor);
+                board[from.getRow()][from.getCol()] = null;
+            }
+            case PROMOTION_BISHOP -> {
+                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.BISHOP, turnColor);
+                board[from.getRow()][from.getCol()] = null;
+            }
+            case PROMOTION_ROOK -> {
+                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.ROOK, turnColor);
+                board[from.getRow()][from.getCol()] = null;
+            }
+            case PROMOTION_KNIGHT -> {
+                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.KNIGHT, turnColor);
+                board[from.getRow()][from.getCol()] = null;
+            }
+            case CASTLING_LONG -> {
+                board[from.getRow()][from.getCol()] = null;
+                board[to.getRow()][to.getCol()] = piece;
+                board[to.getRow()][to.getCol() - 1] = board[to.getRow()][to.getCol() + 1];
+                board[to.getRow()][to.getCol() + 1] = null;
+            }
+            case CASTLING_SHORT -> {
+                board[from.getRow()][from.getCol()] = null;
+                board[to.getRow()][to.getCol()] = piece;
+                board[to.getRow()][to.getCol() + 1] = board[to.getRow()][to.getCol() - 1];
+                board[to.getRow()][to.getCol() - 1] = null;
+            }
+            case EN_PASSANT -> {
+                System.out.println("FROM: " + from);
+                System.out.println("TO: " + to);
+                System.out.println("Captured at: " + from.getRow() + ", " + to.getCol());
+                System.out.println("Board before capture: " + board[from.getRow()][to.getCol()]);
+                board[from.getRow()][from.getCol()] = null;
+                board[from.getRow()][to.getCol()] = null; // capture
+                board[to.getRow()][to.getCol()] = piece;
+                System.out.println("Board after capture: " + board[from.getRow()][to.getCol()]);
+
+            }
+        }
         if (turnColor == PieceColor.WHITE)
             turnColor = PieceColor.BLACK;
         else
             turnColor = PieceColor.WHITE;
 
-        if (isCheckPresent(turnColor)) {
-            // System.out.println("The " + turnColor + " king is in check!");
-        }
+        // if(isCheckPresent(turnColor)){
+        // System.out.println("The " + turnColor + " king is in check!");
+        // }
 
     }
 
@@ -120,11 +168,23 @@ public class GameState {
         List<PieceOnSquare> pieces = getPiecesOnSquare(color);
         for (PieceOnSquare pieceOnSquare : pieces) {
             pieceMoves = pieceOnSquare.getLegalMoves(board, this);
-            for (Move pieceMove : pieceMoves) {
-                moves.add(pieceMove);
+
+            if (pieceOnSquare.getPiece().getPieceType() == PieceType.PAWN) { // promotion and en passant checks
+                moves.addAll(getEnPassantMoves(pieceOnSquare));
+
+                if (!getPromotionMoves(pieceOnSquare).isEmpty()) {
+                    moves.addAll(getPromotionMoves(pieceOnSquare));
+                    continue;
+                }
+            }
+
+            moves.addAll(pieceMoves);
+            if (pieceOnSquare.getPiece().getPieceType() == PieceType.KING) { // castling checks
+                moves.addAll(getCastlingMoves(pieceOnSquare));
             }
 
         }
+
         return moves;
     }
 
@@ -138,12 +198,57 @@ public class GameState {
             if (!testState.isCheckPresent(color))
                 legalMoves.add(move);
         }
-
         return legalMoves;
     }
 
-    public void pawnPromotion(Square square, PieceType type) {
-        board[square.getRow()][square.getCol()] = PieceFactory.createPiece(type, turnColor);
+    private List<Move> getEnPassantMoves(PieceOnSquare pieceOnSquare) {
+        ArrayList<Move> moves = new ArrayList<>();
+        Square from = pieceOnSquare.getSquare();
+
+        if (from.getRow() != (pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? 3 : 4))
+            return moves;
+
+        int direction = pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? -1 : 1;
+        Square leftCaptured = new Square(from.getRow(), from.getCol() - 1);
+        Square rightCaptured = new Square(from.getRow(), from.getCol() + 1);
+        Square captured;
+        System.out.println(lastMove);
+        if (lastMove.getTo().equals(leftCaptured))
+            captured = leftCaptured;
+        else if (lastMove.getTo().equals(rightCaptured))
+            captured = rightCaptured;
+        else
+            return moves;
+        System.out.println("ENPAssANT CHECL");
+        if (!lastMove.getFrom().equals(new Square(captured.getRow() + direction * 2, captured.getCol())))
+            return moves;
+        if (board[lastMove.getTo().getRow()][lastMove.getTo().getCol()].getPieceType() != PieceType.PAWN)
+            return moves;
+        moves.add(new Move(from, new Square(captured.getRow() + direction, captured.getCol()), this,
+                MoveType.EN_PASSANT));
+        return moves;
+    }
+
+    private List<Move> getCastlingMoves(PieceOnSquare pieceOnSquare) {
+        ArrayList<Move> moves = new ArrayList<>();
+
+        return moves;
+
+    }
+
+    private List<Move> getPromotionMoves(PieceOnSquare pieceOnSquare) {
+        ArrayList<Move> moves = new ArrayList<>();
+        Square from = pieceOnSquare.getSquare();
+        if (from.getRow() != (pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? 1 : 6))
+            return moves;
+        int direction = pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? -1 : 1;
+        Square to = new Square(from.getRow() + direction, from.getCol());
+        moves.add(new Move(from, to, this, MoveType.PROMOTION_BISHOP));
+        moves.add(new Move(from, to, this, MoveType.PROMOTION_ROOK));
+        moves.add(new Move(from, to, this, MoveType.PROMOTION_KNIGHT));
+        moves.add(new Move(from, to, this, MoveType.PROMOTION_QUEEN));
+        return moves;
+
     }
 
 }
