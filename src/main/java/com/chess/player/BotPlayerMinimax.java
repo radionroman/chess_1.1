@@ -8,28 +8,151 @@ import com.chess.model.ChessModel;
 import com.chess.model.GameState;
 import com.chess.model.Move;
 import com.chess.model.PieceColor;
+import com.chess.model.pieces.Piece;
+import com.chess.model.pieces.PieceType;
 
-public class BotPlayerMinimax implements Player{
+public class BotPlayerMinimax implements Player {
+
+    int[][] PAWN_TABLE = {
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 50, 50, 50, 50, 50, 50, 50, 50 },
+            { 10, 10, 20, 30, 30, 20, 10, 10 },
+            { 5, 5, 10, 25, 25, 10, 5, 5 },
+            { 0, 0, 0, 20, 20, 0, 0, 0 },
+            { 5, -5, -10, 0, 0, -10, -5, 5 },
+            { 5, 10, 10, -20, -20, 10, 10, 5 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 }
+    };
+
+    int[][] KNIGHT_TABLE = {
+            { -50, -40, -30, -30, -30, -30, -40, -50 },
+            { -40, -20, 0, 0, 0, 0, -20, -40 },
+            { -30, 0, 10, 15, 15, 10, 0, -30 },
+            { -30, 5, 15, 20, 20, 15, 5, -30 },
+            { -30, 0, 15, 20, 20, 15, 0, -30 },
+            { -30, 5, 10, 15, 15, 10, 5, -30 },
+            { -40, -20, 0, 5, 5, 0, -20, -40 },
+            { -50, -40, -30, -30, -30, -30, -40, -50 }
+    };
+    int[][] BISHOP_TABLE = {
+            { -20, -10, -10, -10, -10, -10, -10, -20 },
+            { -10, 0, 0, 0, 0, 0, 0, -10 },
+            { -10, 0, 5, 10, 10, 5, 0, -10 },
+            { -10, 5, 5, 10, 10, 5, 5, -10 },
+            { -10, 0, 10, 10, 10, 10, 0, -10 },
+            { -10, 10, 10, 10, 10, 10, 10, -10 },
+            { -10, 5, 0, 0, 0, 0, 5, -10 },
+            { -20, -10, -10, -10, -10, -10, -10, -20 }
+    };
+    int[][] ROOK_TABLE = {
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 5, 10, 10, 10, 10, 10, 10, 5 },
+            { -5, 0, 0, 0, 0, 0, 0, -5 },
+            { -5, 0, 0, 0, 0, 0, 0, -5 },
+            { -5, 0, 0, 0, 0, 0, 0, -5 },
+            { -5, 0, 0, 0, 0, 0, 0, -5 },
+            { -5, 0, 0, 0, 0, 0, 0, -5 },
+            { 0, 0, 0, 5, 5, 0, 0, 0 }
+    };
+    int[][] QUEEN_TABLE = {
+            { -20, -10, -10, -5, -5, -10, -10, -20 },
+            { -10, 0, 0, 0, 0, 0, 0, -10 },
+            { -10, 0, 5, 5, 5, 5, 0, -10 },
+            { -5, 0, 5, 5, 5, 5, 0, -5 },
+            { 0, 0, 5, 5, 5, 5, 0, -5 },
+            { -10, 5, 5, 5, 5, 5, 0, -10 },
+            { -10, 0, 5, 0, 0, 0, 0, -10 },
+            { -20, -10, -10, -5, -5, -10, -10, -20 }
+    };
+    int[][] KING_MID_TABLE = {
+            { -30, -40, -40, -50, -50, -40, -40, -30 },
+            { -30, -40, -40, -50, -50, -40, -40, -30 },
+            { -30, -40, -40, -50, -50, -40, -40, -30 },
+            { -30, -40, -40, -50, -50, -40, -40, -30 },
+            { -20, -30, -30, -40, -40, -30, -30, -20 },
+            { -10, -20, -20, -20, -20, -20, -20, -10 },
+            { 20, 20, 0, 0, 0, 0, 20, 20 },
+            { 20, 30, 10, 0, 0, 10, 30, 20 }
+    };
+    int[][] KING_END_TABLE = {
+            { -50, -40, -30, -20, -20, -30, -40, -50 },
+            { -30, -20, -10, 0, 0, -10, -20, -30 },
+            { -30, -10, 20, 30, 30, 20, -10, -30 },
+            { -30, -10, 30, 40, 40, 30, -10, -30 },
+            { -30, -10, 30, 40, 40, 30, -10, -30 },
+            { -30, -10, 20, 30, 30, 20, -10, -30 },
+            { -30, -30, 0, 0, 0, 0, -30, -30 },
+            { -50, -30, -30, -30, -30, -30, -30, -50 }
+    };
+
     Random random = new Random();
 
-    public BotPlayerMinimax(){
+    public BotPlayerMinimax() {
     }
 
     private int evaluate(GameState gameState) {
-        return gameState.getLegalMovesForColor(PieceColor.BLACK).size() - gameState.getLegalMovesForColor(PieceColor.WHITE).size();
+
+        int value = 0;
+        Piece[][] board = gameState.getBoard();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] == null)
+                    continue;
+                switch (board[i][j].getPieceType()) {
+                    case KING -> {
+                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
+                            value += board[i][j].getRank() + KING_MID_TABLE[i][j];
+                        else
+                            value -= board[i][j].getRank() + KING_MID_TABLE[7 - i][j];
+                    }
+                    case QUEEN -> {
+                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
+                            value += board[i][j].getRank() + QUEEN_TABLE[i][j];
+                        else
+                            value -= board[i][j].getRank() + QUEEN_TABLE[7 - i][j];
+                    }
+                    case ROOK -> {
+                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
+                            value += board[i][j].getRank() + ROOK_TABLE[i][j];
+                        else
+                            value -= board[i][j].getRank() + ROOK_TABLE[7 - i][j];
+                    }
+                    case BISHOP -> {
+                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
+                            value += board[i][j].getRank() + BISHOP_TABLE[i][j];
+                        else
+                            value -= board[i][j].getRank() + BISHOP_TABLE[7 - i][j];
+                    }
+                    case KNIGHT -> {
+                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
+                            value += board[i][j].getRank() + KNIGHT_TABLE[i][j];
+                        else
+                            value -= board[i][j].getRank() + KNIGHT_TABLE[7 - i][j];
+                    }
+                    case PAWN -> {
+                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
+                            value += board[i][j].getRank() + PAWN_TABLE[i][j];
+                        else
+                            value -= board[i][j].getRank() + PAWN_TABLE[7 - i][j];
+                    }
+                }
+
+            }
+        }
+        return value;
     }
 
     private int minimax(GameState gameState, int depth, boolean maximizingPlayer) {
         if (depth == 0 || gameState.getLegalMovesForColor(gameState.getTurnColor()).isEmpty()) {
             return evaluate(gameState);
         }
-    
+
         List<Move> legalMoves = gameState.getLegalMovesForColor(gameState.getTurnColor());
-    
+
         if (maximizingPlayer) {
             int maxEval = Integer.MIN_VALUE;
             for (Move move : legalMoves) {
-                System.out.println(move);
+                // System.out.println(move);
                 GameState child = gameState.copy();
                 child.movePiece(move);
 
@@ -48,20 +171,20 @@ public class BotPlayerMinimax implements Player{
             return minEval;
         }
     }
-    
+
     @Override
     public void requestMove(ChessModel model, Consumer<Move> callback) {
         GameState gameState = model.getGameState();
         List<Move> legalMoves = gameState.getLegalMovesForColor(gameState.getTurnColor());
-    
+
         Move bestMove = null;
         int bestValue = (gameState.getTurnColor() == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-    
+
         for (Move move : legalMoves) {
             GameState child = gameState.copy();
             child.movePiece(move);
-            int value = minimax(child, 2, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for start
-    
+            int value = minimax(child, 3, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for start
+
             if (gameState.getTurnColor() == PieceColor.WHITE && value > bestValue) {
                 bestValue = value;
                 bestMove = move;
@@ -70,13 +193,12 @@ public class BotPlayerMinimax implements Player{
                 bestMove = move;
             }
         }
-    
+
         if (bestMove == null && !legalMoves.isEmpty()) {
             bestMove = legalMoves.get(0); // fallback
         }
-    
+
         callback.accept(bestMove);
     }
-    
 
 }

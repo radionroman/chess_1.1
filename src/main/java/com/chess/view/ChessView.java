@@ -63,9 +63,8 @@ public class ChessView extends JFrame{
                 button.setBackground((i + j) % 2 == 0 ? lightSquare : darkSquare);
                 button.setForeground(Color.BLACK);
                 button.setOpaque(true);
-                button.setBounds(i*100, j*100, 100, 100);
                 squares[i][j] = button;
-                button.setPreferredSize(new Dimension(100,100)); 
+                button.setPreferredSize(new Dimension(80,80)); 
 
                 boardPanel.add(button);
             }
@@ -130,8 +129,11 @@ public class ChessView extends JFrame{
                 squares[i][j].setBorder(BorderFactory.createEmptyBorder());
                 if(isActiveSquares[i][j])squares[i][j].setBackground((i + j) % 2 == 0 ? hLightSquare : hDarkSquare);
                 else squares[i][j].setBackground((i + j) % 2 == 0 ? lightSquare : darkSquare);
+                System.out.print(isActiveSquares[i][j]? 1:0);
             }
+            System.out.println("");
         }
+        System.out.println("");
 
         if (lastMove != null) {
             squares[lastMove[0][0]][lastMove[0][1]].setBorder(new LineBorder(Color.RED, 4));

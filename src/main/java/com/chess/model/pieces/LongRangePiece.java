@@ -6,9 +6,9 @@ import java.util.List;
 import com.chess.model.PieceColor;
 import com.chess.model.Square;
 
-public abstract class LongRangePiece extends Piece{
-    public LongRangePiece(PieceColor color, PieceType type){
-        super(color, type);
+public abstract class LongRangePiece extends Piece {
+    public LongRangePiece(PieceColor color, PieceType type, int rank) {
+        super(color, type, rank);
 
     }
 
@@ -22,16 +22,16 @@ public abstract class LongRangePiece extends Piece{
             int r = row + dir[0];
             int c = col + dir[1];
 
-            while (isInsideBoard(r,c)) {
+            while (isInsideBoard(r, c)) {
                 if (board[r][c] == null) {
-                    moves.add(new Square(r,c));
+                    moves.add(new Square(r, c));
                 } else {
                     if (board[r][c].getPieceColor() != this.getPieceColor()) {
-                        moves.add(new Square(r,c));
+                        moves.add(new Square(r, c));
                     }
                     break;
                 }
-                
+
                 r += dir[0];
                 c += dir[1];
             }
@@ -39,8 +39,5 @@ public abstract class LongRangePiece extends Piece{
         }
         return moves;
     }
-
-    
-    
 
 }
