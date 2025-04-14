@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.Stack;
 
 import com.chess.model.pieces.Piece;
+
+import scala.collection.immutable.List;
 public class ChessModel {
     private final Stack<Move> moveHistory = new Stack<>();
     private GameState gameState;
@@ -18,13 +20,17 @@ public class ChessModel {
     public Move processBoardClicked(int row, int col){
         Square clickedSquare = new Square(row, col);
         Move move = null;
+        ArrayList<Move> moves;
         if (selectedSquare.isPresent()) {
             if (!clickedSquare.equals(selectedSquare.get())){
                 Piece[][] board = gameState.getBoard();
                 Piece piece = board[selectedSquare.get().getRow()][selectedSquare.get().getCol()];
                 if (piece == null) return move;
-                move = new Move(selectedSquare.get(), clickedSquare, gameState.copy());
-            }
+                moves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+                userMoved(moves.find((move) -> {
+                    if (move.getFrom().equals(selectedSquare.get()) && move.getTo().equals(clickedSquare)) return true;
+                }));
+            }   
             clearSelectedSquare();
         }
         else {

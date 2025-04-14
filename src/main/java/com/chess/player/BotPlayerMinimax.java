@@ -29,7 +29,6 @@ public class BotPlayerMinimax implements Player{
         if (maximizingPlayer) {
             int maxEval = Integer.MIN_VALUE;
             for (Move move : legalMoves) {
-                System.out.println(move);
                 GameState child = gameState.copy();
                 child.movePiece(move);
 

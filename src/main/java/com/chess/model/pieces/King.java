@@ -33,6 +33,7 @@ public class King extends Piece{
             moves.add(new Square(r,c));
             
         }
+
         return moves;
     }
 }
