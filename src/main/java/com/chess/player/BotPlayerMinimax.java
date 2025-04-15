@@ -1,13 +1,13 @@
 package com.chess.player;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import com.chess.model.Board;
 import com.chess.model.ChessModel;
 import com.chess.model.GameState;
 import com.chess.model.Move;
+import com.chess.model.MoveGenerator;
 import com.chess.model.PieceColor;
 
 public class BotPlayerMinimax implements Player {
@@ -84,8 +84,6 @@ public class BotPlayerMinimax implements Player {
             { -50, -30, -30, -30, -30, -30, -30, -50 }
     };
 
-    Random random = new Random();
-
     public BotPlayerMinimax() {
     }
 
@@ -142,11 +140,11 @@ public class BotPlayerMinimax implements Player {
     }
 
     private int minimax(GameState gameState, int depth, boolean maximizingPlayer) {
-        if (depth == 0 || gameState.getLegalMovesForColor(gameState.getTurnColor()).isEmpty()) {
+        if (depth == 0 || MoveGenerator.getLegalMovesForColor(gameState).isEmpty()) {
             return evaluate(gameState);
         }
 
-        List<Move> legalMoves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(gameState);
 
         if (maximizingPlayer) {
             int maxEval = Integer.MIN_VALUE;
@@ -174,7 +172,7 @@ public class BotPlayerMinimax implements Player {
     @Override
     public void requestMove(ChessModel model, Consumer<Move> callback) {
         GameState gameState = model.getGameState();
-        List<Move> legalMoves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(gameState);
 
         Move bestMove = null;
         int bestValue = (gameState.getTurnColor() == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;

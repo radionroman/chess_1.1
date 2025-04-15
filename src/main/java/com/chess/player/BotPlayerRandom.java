@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.chess.model.*;
+import com.chess.model.ChessModel;
+import com.chess.model.GameState;
+import com.chess.model.Move;
+import com.chess.model.MoveGenerator;
 
 public class BotPlayerRandom implements Player{
     Random random = new Random();
@@ -15,7 +18,7 @@ public class BotPlayerRandom implements Player{
     @Override
     public void requestMove(ChessModel model, Consumer<Move> callback) {
         GameState gameState = model.getGameState();
-        List<Move> legalMoves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(gameState);
         Move move = legalMoves.get(random.nextInt(legalMoves.size()));
         callback.accept(move);
         

@@ -24,7 +24,7 @@ public class ChessModel {
 
             if (!clickedSquare.equals(selectedSquare.get())) {
 
-                moves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+                moves = MoveGenerator.getLegalMovesForColor(gameState);
 
                 for (Move legalMove : moves) {
                     if (legalMove.getFrom().equals(selectedSquare.get()) && legalMove.getTo().equals(clickedSquare)) {
@@ -70,7 +70,7 @@ public class ChessModel {
 
     public RenderState getRenderState(boolean allowClicks) {
 
-        return new RenderState(gameState.getLegalMovesForColor(gameState.getTurnColor()), gameState.getBoard(),
+        return new RenderState(MoveGenerator.getLegalMovesForColor(gameState), gameState.getBoard(),
                 moveHistory.empty() ? null : moveHistory.peek(), selectedSquare, allowClicks);
     }
 

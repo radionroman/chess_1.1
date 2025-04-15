@@ -2,10 +2,10 @@ package com.chess.controller;
 
 import com.chess.model.ChessModel;
 import com.chess.model.Move;
+import com.chess.model.MoveGenerator;
 import com.chess.model.MoveType;
 import com.chess.model.PieceColor;
 import com.chess.player.BotPlayer;
-import com.chess.player.BotPlayerMinimax;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.ChessView;
@@ -14,7 +14,7 @@ public class ChessController {
     private final ChessView view;
     private final ChessModel model;
     private HumanPlayer whitePlayer = new HumanPlayer();
-    private Player blackPlayer = new BotPlayerMinimax();
+    private HumanPlayer blackPlayer = new HumanPlayer();
     // private Player blackPlayer = new BotPlayerMinimax();
 
     public ChessController(ChessModel model, ChessView view) {
@@ -40,7 +40,7 @@ public class ChessController {
             else
                 view.refresh(model.getRenderState(true));
             System.out.println("view was refreshed");
-            if (model.getGameState().getLegalMovesForColor(model.getTurnColor()).isEmpty()) {
+            if (MoveGenerator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
                 System.out.println("MATE");
                 view.mate(model.getTurnColor().toString());
                 return;
