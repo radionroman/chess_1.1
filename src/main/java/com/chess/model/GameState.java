@@ -8,22 +8,18 @@ import com.chess.model.pieces.PieceFactory;
 import com.chess.model.pieces.PieceType;
 
 public class GameState {
-    private final Piece[][] board;
+    private final Board board;
     private PieceColor turnColor;
     private Move lastMove = null;
 
     public GameState() {
-        board = boardInit();
+        board = new Board();
+        board.init();
         turnColor = PieceColor.WHITE;
     }
 
-    public GameState(Piece[][] board, PieceColor turnColor, Move lastMove) {
-        this.board = new Piece[8][8];
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                this.board[i][j] = board[i][j] == null ? null : board[i][j].copy();
-            }
-        }
+    public GameState(Board board, PieceColor turnColor, Move lastMove) {
+        this.board = board.copy();
         this.turnColor = turnColor;
         this.lastMove = lastMove;
     }
@@ -33,88 +29,12 @@ public class GameState {
         return gameStateCopy;
     }
 
-    private Piece[][] boardInit() {
-        Piece[][] tempBoard = new Piece[8][8];
-        PieceType[] order = new PieceType[] {
-                PieceType.ROOK,
-                PieceType.KNIGHT,
-                PieceType.BISHOP,
-                PieceType.QUEEN,
-                PieceType.KING,
-                PieceType.BISHOP,
-                PieceType.KNIGHT,
-                PieceType.ROOK,
-        };
-        for (int i = 0; i < tempBoard.length; i++) {
-            tempBoard[0][i] = PieceFactory.createPiece(order[i], PieceColor.BLACK);
-            tempBoard[1][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.BLACK);
-            tempBoard[6][i] = PieceFactory.createPiece(PieceType.PAWN, PieceColor.WHITE);
-            tempBoard[7][i] = PieceFactory.createPiece(order[i], PieceColor.WHITE);
-        }
-        return tempBoard;
-    }
+
 
     public void movePiece(Move move) {
         lastMove = move;
-        Square from = move.getFrom();
-        Square to = move.getTo();
-        Piece piece = board[from.getRow()][from.getCol()];
-        MoveType type = move.getType();
-        piece.setHasMoved();
-        switch (type) {
-            case DEFAULT -> {
-                board[to.getRow()][to.getCol()] = piece;
-                board[from.getRow()][from.getCol()] = null;
-
-            }
-            case PROMOTION_QUEEN -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.QUEEN, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_BISHOP -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.BISHOP, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_ROOK -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.ROOK, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_KNIGHT -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.KNIGHT, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case CASTLING_LONG -> {
-                board[from.getRow()][from.getCol()] = null;
-                board[to.getRow()][to.getCol()] = piece;
-                board[to.getRow()][to.getCol() - 1] = board[to.getRow()][to.getCol() + 1];
-                board[to.getRow()][to.getCol() + 1] = null;
-            }
-            case CASTLING_SHORT -> {
-                board[from.getRow()][from.getCol()] = null;
-                board[to.getRow()][to.getCol()] = piece;
-                board[to.getRow()][to.getCol() + 1] = board[to.getRow()][to.getCol() - 1];
-                board[to.getRow()][to.getCol() - 1] = null;
-            }
-            case EN_PASSANT -> {
-                // System.out.println("FROM: " + from);
-                // System.out.println("TO: " + to);
-                // System.out.println("Captured at: " + from.getRow() + ", " + to.getCol());
-                // System.out.println("Board before capture: " + board[from.getRow()][to.getCol()]);
-                board[from.getRow()][from.getCol()] = null;
-                board[from.getRow()][to.getCol()] = null; // capture
-                board[to.getRow()][to.getCol()] = piece;
-                // System.out.println("Board after capture: " + board[from.getRow()][to.getCol()]);
-
-            }
-        }
-        if (turnColor == PieceColor.WHITE)
-            turnColor = PieceColor.BLACK;
-        else
-            turnColor = PieceColor.WHITE;
-
-        // if(isCheckPresent(turnColor)){
-        // System.out.println("The " + turnColor + " king is in check!");
-        // }
+        board.movePiece(move, turnColor);
+        turnColor = turnColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
 
     }
 
@@ -149,7 +69,7 @@ public class GameState {
     }
 
     // Basic Getters
-    public Piece[][] getBoard() {
+    public Board getBoard() {
         return board;
     }
 
@@ -160,13 +80,13 @@ public class GameState {
     // Advanced getters
     public List<PieceOnSquare> getPiecesOnSquare(PieceColor color) {
         ArrayList<PieceOnSquare> pieces = new ArrayList<>();
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                if (board[i][j] == null)
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board.isEmptyAt(i,j))
                     continue;
-                if (board[i][j].getPieceColor() != color)
+                if (board.getPieceAt(i, j).getPieceColor() != color)
                     continue;
-                pieces.add(new PieceOnSquare(board[i][j], new Square(i, j)));
+                pieces.add(new PieceOnSquare(board.getPieceAt(i, j), new Square(i, j)));
             }
         }
         return pieces;
@@ -233,7 +153,7 @@ public class GameState {
         // System.out.println("ENPAssANT CHECL");
         if (!lastMove.getFrom().equals(new Square(captured.getRow() + direction * 2, captured.getCol())))
             return moves;
-        if (board[lastMove.getTo().getRow()][lastMove.getTo().getCol()].getPieceType() != PieceType.PAWN)
+        if (board.getPieceAt(lastMove.getTo()).getPieceType() != PieceType.PAWN)
             return moves;
         moves.add(new Move(from, new Square(captured.getRow() + direction, captured.getCol()), this.copy(),
                 MoveType.EN_PASSANT));
@@ -248,7 +168,7 @@ public class GameState {
         Square kingSquare = pieceOnSquare.getSquare();
         int kingCol = kingSquare.getCol();
         Square rookSquare = new Square(kingSquare.getRow(), rookCol);
-        Piece rook = board[rookSquare.getRow()][rookSquare.getCol()];
+        Piece rook = board.getPieceAt(rookSquare);
         if (rook == null || rook.hasMoved())return moves;
         int start, end;
         
@@ -261,7 +181,7 @@ public class GameState {
         }
         // System.out.println(start + " " + end);
         for (int i = start; i <= end; i++){
-            if (isCheckPresent(turnColor, new Square(kingSquare.getRow(), i)) || (i != kingCol && board[kingSquare.getRow()][i] != null)) {
+            if (isCheckPresent(turnColor, new Square(kingSquare.getRow(), i)) || (i != kingCol && !board.isEmptyAt(kingSquare.getRow(), i))) {
                 return moves;
             }
         }

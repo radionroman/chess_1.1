@@ -2,6 +2,7 @@ package com.chess.model.pieces;
 
 import java.util.List;
 
+import com.chess.model.Board;
 import com.chess.model.PieceColor;
 import com.chess.model.Square;
 
@@ -9,7 +10,7 @@ public abstract class Piece {
     private final PieceColor color;
     private final PieceType type;
     private String symbol;
-    private int rank;
+    private final int rank;
     private boolean hasMoved = false;
 
     public Piece(PieceColor color, PieceType type, int rank) {
@@ -59,7 +60,7 @@ public abstract class Piece {
         return color;
     }
 
-    public abstract List<Square> getLegalMoves(Piece[][] board, int row, int col);
+    public abstract List<Square> getLegalMoves(Board board, int row, int col);
 
     protected boolean isInsideBoard(int r, int c) {
         return r >= 0 && c >= 0 && r < 8 && c < 8;

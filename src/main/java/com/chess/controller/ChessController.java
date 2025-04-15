@@ -24,7 +24,7 @@ public class ChessController {
             handleClickBoard(row, col);
         });
         view.setControlClickedListener((type) -> handleClickControl(type));
-        view.refresh(model.getBoardState(true));
+        view.refresh(model.getRenderState(true));
         nextTurn();
     }
 
@@ -36,9 +36,9 @@ public class ChessController {
             model.applyMove(move);
             System.out.println("move was applied");
             if (current instanceof BotPlayer)
-                view.refresh(model.getBoardState(false));
+                view.refresh(model.getRenderState(false));
             else
-                view.refresh(model.getBoardState(true));
+                view.refresh(model.getRenderState(true));
             System.out.println("view was refreshed");
             if (model.getGameState().getLegalMovesForColor(model.getTurnColor()).isEmpty()) {
                 System.out.println("MATE");
@@ -80,13 +80,13 @@ public class ChessController {
                 };
                 Move promotedMove = new Move(move.getFrom(), move.getTo(), move.getGameState(), newType);
                 userMoved(promotedMove);
-                view.refresh(model.getBoardState(true));
+                view.refresh(model.getRenderState(true));
                 return;
             });
         }
         if (move != null)
             userMoved(move);
-        view.refresh(model.getBoardState(true));
+        view.refresh(model.getRenderState(true));
 
     }
 
@@ -97,11 +97,11 @@ public class ChessController {
                 model.undo();
                 model.undo();
             }
-            
+
 
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);
         }
-        view.refresh(model.getBoardState(true));
+        view.refresh(model.getRenderState(true));
 
     }
 

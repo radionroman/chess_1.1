@@ -3,21 +3,19 @@ package com.chess.model;
 import java.util.List;
 import java.util.Optional;
 
-import com.chess.model.pieces.Piece;
-
 public class RenderState {
     private final boolean[][] squaresActive;
     private final String[][] board;
     private final int[][] lastMove;
 
-    public RenderState(List<Move> legalMoves, Piece[][] board, Move lastMove, Optional<Square> selectedSquare,
+    public RenderState(List<Move> legalMoves, Board board, Move lastMove, Optional<Square> selectedSquare,
             boolean allowClicks) {
 
         String[][] tempBoard = new String[8][8];
         for (int i = 0; i < tempBoard.length; i++) {
             for (int j = 0; j < tempBoard.length; j++) {
-                if (board[i][j] != null)
-                    tempBoard[i][j] = board[i][j].getUnicodeSymbol();
+                if (!board.isEmptyAt(i, j))
+                    tempBoard[i][j] = board.getPieceAt(i, j).getUnicodeSymbol();
             }
         }
         this.lastMove = lastMove == null ? null

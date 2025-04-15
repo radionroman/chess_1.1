@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import com.chess.model.Board;
 import com.chess.model.ChessModel;
 import com.chess.model.GameState;
 import com.chess.model.Move;
 import com.chess.model.PieceColor;
-import com.chess.model.pieces.Piece;
-import com.chess.model.pieces.PieceType;
 
 public class BotPlayerMinimax implements Player {
 
@@ -93,47 +92,47 @@ public class BotPlayerMinimax implements Player {
     private int evaluate(GameState gameState) {
 
         int value = 0;
-        Piece[][] board = gameState.getBoard();
+        Board board = gameState.getBoard();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board[i][j] == null)
+                if (board.isEmptyAt(i, j))
                     continue;
-                switch (board[i][j].getPieceType()) {
+                switch (board.getPieceAt(i, j).getPieceType()) {
                     case KING -> {
-                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
-                            value += board[i][j].getRank() + KING_MID_TABLE[i][j];
+                        if (board.getPieceAt(i, j).getPieceColor() == PieceColor.WHITE)
+                            value += board.getPieceAt(i, j).getRank() + KING_MID_TABLE[i][j];
                         else
-                            value -= board[i][j].getRank() + KING_MID_TABLE[7 - i][j];
+                            value -= board.getPieceAt(i, j).getRank() + KING_MID_TABLE[7 - i][j];
                     }
                     case QUEEN -> {
-                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
-                            value += board[i][j].getRank() + QUEEN_TABLE[i][j];
+                        if (board.getPieceAt(i, j).getPieceColor() == PieceColor.WHITE)
+                            value += board.getPieceAt(i, j).getRank() + QUEEN_TABLE[i][j];
                         else
-                            value -= board[i][j].getRank() + QUEEN_TABLE[7 - i][j];
+                            value -= board.getPieceAt(i, j).getRank() + QUEEN_TABLE[7 - i][j];
                     }
                     case ROOK -> {
-                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
-                            value += board[i][j].getRank() + ROOK_TABLE[i][j];
+                        if (board.getPieceAt(i, j).getPieceColor() == PieceColor.WHITE)
+                            value += board.getPieceAt(i, j).getRank() + ROOK_TABLE[i][j];
                         else
-                            value -= board[i][j].getRank() + ROOK_TABLE[7 - i][j];
+                            value -= board.getPieceAt(i, j).getRank() + ROOK_TABLE[7 - i][j];
                     }
                     case BISHOP -> {
-                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
-                            value += board[i][j].getRank() + BISHOP_TABLE[i][j];
+                        if (board.getPieceAt(i, j).getPieceColor() == PieceColor.WHITE)
+                            value += board.getPieceAt(i, j).getRank() + BISHOP_TABLE[i][j];
                         else
-                            value -= board[i][j].getRank() + BISHOP_TABLE[7 - i][j];
+                            value -= board.getPieceAt(i, j).getRank() + BISHOP_TABLE[7 - i][j];
                     }
                     case KNIGHT -> {
-                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
-                            value += board[i][j].getRank() + KNIGHT_TABLE[i][j];
+                        if (board.getPieceAt(i, j).getPieceColor() == PieceColor.WHITE)
+                            value += board.getPieceAt(i, j).getRank() + KNIGHT_TABLE[i][j];
                         else
-                            value -= board[i][j].getRank() + KNIGHT_TABLE[7 - i][j];
+                            value -= board.getPieceAt(i, j).getRank() + KNIGHT_TABLE[7 - i][j];
                     }
                     case PAWN -> {
-                        if (board[i][j].getPieceColor() == PieceColor.WHITE)
-                            value += board[i][j].getRank() + PAWN_TABLE[i][j];
+                        if (board.getPieceAt(i, j).getPieceColor() == PieceColor.WHITE)
+                            value += board.getPieceAt(i, j).getRank() + PAWN_TABLE[i][j];
                         else
-                            value -= board[i][j].getRank() + PAWN_TABLE[7 - i][j];
+                            value -= board.getPieceAt(i, j).getRank() + PAWN_TABLE[7 - i][j];
                     }
                 }
 

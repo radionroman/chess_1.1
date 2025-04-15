@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 
-import com.chess.model.pieces.Piece;
-
 public class ChessModel {
     private final Stack<Move> moveHistory = new Stack<>();
     private GameState gameState;
@@ -21,20 +19,24 @@ public class ChessModel {
         Square clickedSquare = new Square(row, col);
         Move move = null;
         List<Move> moves;
+
         if (selectedSquare.isPresent()) {
+
             if (!clickedSquare.equals(selectedSquare.get())) {
-                Piece[][] board = gameState.getBoard();
-                Piece piece = board[selectedSquare.get().getRow()][selectedSquare.get().getCol()];
-                if (piece == null)
-                    return move;
+
                 moves = gameState.getLegalMovesForColor(gameState.getTurnColor());
+
                 for (Move legalMove : moves) {
                     if (legalMove.getFrom().equals(selectedSquare.get()) && legalMove.getTo().equals(clickedSquare)) {
                         move = legalMove;
                     }
                 }
             }
+
+
             clearSelectedSquare();
+
+
         } else {
             setSelectedSquare(clickedSquare);
         }
@@ -47,9 +49,7 @@ public class ChessModel {
         moveHistory.push(move);
     }
 
-    public PieceColor getTurnColor() {
-        return gameState.getTurnColor();
-    }
+
 
     public void undo() {
         Move previousMove;
@@ -62,11 +62,13 @@ public class ChessModel {
 
     }
 
+
+    // Getters and setters
     public GameState getGameState() {
         return gameState;
     }
 
-    public RenderState getBoardState(boolean allowClicks) {
+    public RenderState getRenderState(boolean allowClicks) {
 
         return new RenderState(gameState.getLegalMovesForColor(gameState.getTurnColor()), gameState.getBoard(),
                 moveHistory.empty() ? null : moveHistory.peek(), selectedSquare, allowClicks);
@@ -87,5 +89,7 @@ public class ChessModel {
     public boolean[][] getIsSelectableSquares() {
         return isSelectableSquares;
     }
-
+    public PieceColor getTurnColor() {
+        return gameState.getTurnColor();
+    }
 }

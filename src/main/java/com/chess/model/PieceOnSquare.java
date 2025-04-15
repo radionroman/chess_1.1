@@ -15,11 +15,11 @@ public class PieceOnSquare {
         this.square = square;
     }
 
-    public List<Square> getLegalMovesTo(Piece[][] board){
+    public List<Square> getLegalMovesTo(Board board){
         return piece.getLegalMoves(board, square.getRow(), square.getCol());
     }
 
-    public List<Move> getLegalMoves(Piece[][] board, GameState gameState){
+    public List<Move> getLegalMoves(Board board, GameState gameState){
         List<Square> movesTo = piece.getLegalMoves(board, square.getRow(), square.getCol());
         ArrayList<Move> moves = new ArrayList<>();
         for (Square squareTo : movesTo) {
