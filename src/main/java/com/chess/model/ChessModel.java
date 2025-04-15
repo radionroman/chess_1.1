@@ -1,6 +1,5 @@
 package com.chess.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
@@ -29,7 +28,11 @@ public class ChessModel {
                 if (piece == null)
                     return move;
                 moves = gameState.getLegalMovesForColor(gameState.getTurnColor());
-                userMoved(moves.get(0));
+                for (Move legalMove : moves) {
+                    if (legalMove.getFrom().equals(selectedSquare.get()) && legalMove.getTo().equals(clickedSquare)) {
+                        move = legalMove;
+                    }
+                }
             }
             clearSelectedSquare();
         } else {

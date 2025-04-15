@@ -1,5 +1,6 @@
 package com.chess.view;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
@@ -20,22 +22,37 @@ import com.chess.model.RenderState;
 public class ChessView extends JFrame{
     private JPanel boardPanel;
     private JPanel controlPanel;
+    private JPanel chessPanel = new JPanel();
     private final HashMap<String, JButton> controlButtons = new HashMap<>();
     private final JButton[][] squares = new JButton[8][8];
     private final Color lightSquare = new Color(240, 240, 220); // beige
     private final Color darkSquare = new Color(118, 150, 86);   // green
     private final Color hLightSquare     = new Color(250, 255, 200); // highlighted beige (slightly greenish tint)
     private final Color hDarkSquare      = new Color(170, 180, 100); // highlighted green (brighter/warmer green)
-
+    private CardLayout cardLayout = new CardLayout();
+    private JPanel mainPanel = new JPanel(cardLayout);
+    private JPanel menuPanel = new JPanel();
 
     public ChessView() {
         initWindow();
         initBoard();
         initControls();
-        add(controlPanel, BorderLayout.BEFORE_FIRST_LINE);
-        add(boardPanel, BorderLayout.CENTER);
+        initMenu();
+        chessPanel.add(controlPanel, BorderLayout.NORTH);
+        chessPanel.add(boardPanel, BorderLayout.CENTER);
+        mainPanel.add(chessPanel, "chessPanel");
+        mainPanel.add(menuPanel, "menuPanel");
+        mainPanel.setPreferredSize(new Dimension(800,800));
+        cardLayout.show(mainPanel, "menuPanel");
+        add(mainPanel);
         pack();
         setVisible(true);
+    }
+
+    private void initMenu(){
+        JButton startButton = new JButton("Start");
+        startButton.addActionListener(e -> cardLayout.show(mainPanel, "chessPanel"));
+        menuPanel.add(startButton);
     }
 
     private void initWindow(){
@@ -78,16 +95,19 @@ public class ChessView extends JFrame{
         undoButton.setFont(new Font("SansSerif", Font.BOLD, 36));
         undoButton.setText("Undo");
 
-        JButton pvpButton = new JButton();
-        pvpButton.setFont(new Font("SansSerif", Font.BOLD, 36));
-        pvpButton.setText("PVP");
+        JButton returnButton = new JButton("Return");
+
 
         controlButtons.put("Undo", undoButton);
-        controlButtons.put("PVP", pvpButton);
+       
+        returnButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "menuPanel");
+        });
 
         controlPanel.add(undoButton);
-        controlPanel.add(pvpButton);
-        controlPanel.setPreferredSize(new Dimension(800, 100));
+        controlPanel.add(returnButton);
+        
+        controlPanel.setPreferredSize(new Dimension(800, 70));
 
     };
 
@@ -117,6 +137,22 @@ public class ChessView extends JFrame{
         }
     }
 
+    public void showPromotionDialog(Consumer<String> callback){
+            Object[] options = { "Queen", "Rook", "Bishop", "Knight" };
+    String choice = (String) javax.swing.JOptionPane.showInputDialog(
+            this,
+            "Choose promotion piece:",
+            "Pawn Promotion",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            options,
+            "Queen");
+
+    if (choice != null) {
+        callback.accept(choice);
+    }
+    }
+
     // Rendering
     public void refresh(RenderState boardState){
         String[][] board = boardState.getBoard();
@@ -129,11 +165,10 @@ public class ChessView extends JFrame{
                 squares[i][j].setBorder(BorderFactory.createEmptyBorder());
                 if(isActiveSquares[i][j])squares[i][j].setBackground((i + j) % 2 == 0 ? hLightSquare : hDarkSquare);
                 else squares[i][j].setBackground((i + j) % 2 == 0 ? lightSquare : darkSquare);
-                System.out.print(isActiveSquares[i][j]? 1:0);
+                
             }
-            System.out.println("");
         }
-        System.out.println("");
+        
 
         if (lastMove != null) {
             squares[lastMove[0][0]][lastMove[0][1]].setBorder(new LineBorder(Color.RED, 4));

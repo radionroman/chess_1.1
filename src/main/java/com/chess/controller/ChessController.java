@@ -2,10 +2,10 @@ package com.chess.controller;
 
 import com.chess.model.ChessModel;
 import com.chess.model.Move;
+import com.chess.model.MoveType;
 import com.chess.model.PieceColor;
 import com.chess.player.BotPlayer;
 import com.chess.player.BotPlayerMinimax;
-import com.chess.player.BotPlayerRandom;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.ChessView;
@@ -14,7 +14,7 @@ public class ChessController {
     private final ChessView view;
     private final ChessModel model;
     private HumanPlayer whitePlayer = new HumanPlayer();
-    private HumanPlayer blackPlayer = new HumanPlayer();
+    private Player blackPlayer = new BotPlayerMinimax();
     // private Player blackPlayer = new BotPlayerMinimax();
 
     public ChessController(ChessModel model, ChessView view) {
@@ -69,6 +69,21 @@ public class ChessController {
 
     private void handleClickBoard(int row, int col) {
         Move move = model.processBoardClicked(row, col);
+        if (move != null && move.getType().toString().startsWith("PROMOTION")) {
+            view.showPromotionDialog(selectedType -> {
+                MoveType newType = switch (selectedType) {
+                    case "Queen" -> MoveType.PROMOTION_QUEEN;
+            case "Rook" -> MoveType.PROMOTION_ROOK;
+            case "Bishop" -> MoveType.PROMOTION_BISHOP;
+            case "Knight" -> MoveType.PROMOTION_KNIGHT;
+            default -> MoveType.PROMOTION_QUEEN; // fallback
+                };
+                Move promotedMove = new Move(move.getFrom(), move.getTo(), move.getGameState(), newType);
+                userMoved(promotedMove);
+                view.refresh(model.getBoardState(true));
+                return;
+            });
+        }
         if (move != null)
             userMoved(move);
         view.refresh(model.getBoardState(true));
@@ -82,6 +97,7 @@ public class ChessController {
                 model.undo();
                 model.undo();
             }
+            
 
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);
         }

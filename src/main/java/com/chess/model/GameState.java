@@ -96,14 +96,14 @@ public class GameState {
                 board[to.getRow()][to.getCol() - 1] = null;
             }
             case EN_PASSANT -> {
-                System.out.println("FROM: " + from);
-                System.out.println("TO: " + to);
-                System.out.println("Captured at: " + from.getRow() + ", " + to.getCol());
-                System.out.println("Board before capture: " + board[from.getRow()][to.getCol()]);
+                // System.out.println("FROM: " + from);
+                // System.out.println("TO: " + to);
+                // System.out.println("Captured at: " + from.getRow() + ", " + to.getCol());
+                // System.out.println("Board before capture: " + board[from.getRow()][to.getCol()]);
                 board[from.getRow()][from.getCol()] = null;
                 board[from.getRow()][to.getCol()] = null; // capture
                 board[to.getRow()][to.getCol()] = piece;
-                System.out.println("Board after capture: " + board[from.getRow()][to.getCol()]);
+                // System.out.println("Board after capture: " + board[from.getRow()][to.getCol()]);
 
             }
         }
@@ -133,6 +133,16 @@ public class GameState {
             return false;
         for (PieceOnSquare pieceOnSquare : enemyPieces) {
             if (pieceOnSquare.getLegalMovesTo(board).contains(king.getSquare()))
+                return true;
+        }
+        return false;
+    }
+    private boolean isCheckPresent(PieceColor color, Square square) {
+
+        List<PieceOnSquare> enemyPieces = getPiecesOnSquare(
+                color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE);
+        for (PieceOnSquare pieceOnSquare : enemyPieces) {
+            if (pieceOnSquare.getLegalMovesTo(board).contains(square))
                 return true;
         }
         return false;
@@ -180,7 +190,8 @@ public class GameState {
 
             moves.addAll(pieceMoves);
             if (pieceOnSquare.getPiece().getPieceType() == PieceType.KING) { // castling checks
-                moves.addAll(getCastlingMoves(pieceOnSquare));
+                moves.addAll(getCastlingMoves(pieceOnSquare, 0));
+                moves.addAll(getCastlingMoves(pieceOnSquare, 7));
             }
 
         }
@@ -212,26 +223,50 @@ public class GameState {
         Square leftCaptured = new Square(from.getRow(), from.getCol() - 1);
         Square rightCaptured = new Square(from.getRow(), from.getCol() + 1);
         Square captured;
-        System.out.println(lastMove);
+        // System.out.println(lastMove);
         if (lastMove.getTo().equals(leftCaptured))
             captured = leftCaptured;
         else if (lastMove.getTo().equals(rightCaptured))
             captured = rightCaptured;
         else
             return moves;
-        System.out.println("ENPAssANT CHECL");
+        // System.out.println("ENPAssANT CHECL");
         if (!lastMove.getFrom().equals(new Square(captured.getRow() + direction * 2, captured.getCol())))
             return moves;
         if (board[lastMove.getTo().getRow()][lastMove.getTo().getCol()].getPieceType() != PieceType.PAWN)
             return moves;
-        moves.add(new Move(from, new Square(captured.getRow() + direction, captured.getCol()), this,
+        moves.add(new Move(from, new Square(captured.getRow() + direction, captured.getCol()), this.copy(),
                 MoveType.EN_PASSANT));
         return moves;
     }
 
-    private List<Move> getCastlingMoves(PieceOnSquare pieceOnSquare) {
+    private List<Move> getCastlingMoves(PieceOnSquare pieceOnSquare, int rookCol) {
         ArrayList<Move> moves = new ArrayList<>();
-
+        
+        Piece king = pieceOnSquare.getPiece();
+        if (king.hasMoved()) return moves;
+        Square kingSquare = pieceOnSquare.getSquare();
+        int kingCol = kingSquare.getCol();
+        Square rookSquare = new Square(kingSquare.getRow(), rookCol);
+        Piece rook = board[rookSquare.getRow()][rookSquare.getCol()];
+        if (rook == null || rook.hasMoved())return moves;
+        int start, end;
+        
+        if (kingCol > rookCol) {
+            start = rookCol+1;
+            end = kingCol;
+        } else {
+            start = kingCol;
+            end = rookCol-1;
+        }
+        // System.out.println(start + " " + end);
+        for (int i = start; i <= end; i++){
+            if (isCheckPresent(turnColor, new Square(kingSquare.getRow(), i)) || (i != kingCol && board[kingSquare.getRow()][i] != null)) {
+                return moves;
+            }
+        }
+        if (kingCol < rookCol)moves.add(new Move(kingSquare, new Square(kingSquare.getRow(), end), this.copy(), MoveType.CASTLING_LONG));
+        else moves.add(new Move(kingSquare, new Square(kingSquare.getRow(), end), this.copy(), MoveType.CASTLING_SHORT));
         return moves;
 
     }
@@ -243,10 +278,10 @@ public class GameState {
             return moves;
         int direction = pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? -1 : 1;
         Square to = new Square(from.getRow() + direction, from.getCol());
-        moves.add(new Move(from, to, this, MoveType.PROMOTION_BISHOP));
-        moves.add(new Move(from, to, this, MoveType.PROMOTION_ROOK));
-        moves.add(new Move(from, to, this, MoveType.PROMOTION_KNIGHT));
-        moves.add(new Move(from, to, this, MoveType.PROMOTION_QUEEN));
+        moves.add(new Move(from, to, this.copy(), MoveType.PROMOTION_BISHOP));
+        moves.add(new Move(from, to, this.copy(), MoveType.PROMOTION_ROOK));
+        moves.add(new Move(from, to, this.copy(), MoveType.PROMOTION_KNIGHT));
+        moves.add(new Move(from, to, this.copy(), MoveType.PROMOTION_QUEEN));
         return moves;
 
     }
