@@ -37,7 +37,9 @@ public abstract class Piece {
     }
 
     public Piece copy() {
-        return PieceFactory.createPiece(type, color);
+        Piece copyPiece = PieceFactory.createPiece(type, color);
+        if (this.hasMoved)copyPiece.setHasMoved();
+        return copyPiece;
     }
 
     public String getChar() {

@@ -8,6 +8,8 @@ public enum MoveType {
     PROMOTION_BISHOP,
     CASTLING_LONG,
     CASTLING_SHORT,
-    EN_PASSANT
+    EN_PASSANT,
+    PROMOTION
+    
 
 }

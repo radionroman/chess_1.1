@@ -1,6 +1,5 @@
 package com.chess.view;
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,7 +10,6 @@ import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,7 +17,7 @@ import javax.swing.border.LineBorder;
 
 import com.chess.model.RenderState;
 
-public class ChessView extends JFrame{
+public class ChessView extends JPanel{
     private JPanel boardPanel;
     private JPanel controlPanel;
     private JPanel chessPanel = new JPanel();
@@ -29,38 +27,25 @@ public class ChessView extends JFrame{
     private final Color darkSquare = new Color(118, 150, 86);   // green
     private final Color hLightSquare     = new Color(250, 255, 200); // highlighted beige (slightly greenish tint)
     private final Color hDarkSquare      = new Color(170, 180, 100); // highlighted green (brighter/warmer green)
-    private CardLayout cardLayout = new CardLayout();
-    private JPanel mainPanel = new JPanel(cardLayout);
     private JPanel menuPanel = new JPanel();
 
     public ChessView() {
-        initWindow();
+       
         initBoard();
         initControls();
-        initMenu();
         chessPanel.add(controlPanel, BorderLayout.NORTH);
         chessPanel.add(boardPanel, BorderLayout.CENTER);
-        mainPanel.add(chessPanel, "chessPanel");
-        mainPanel.add(menuPanel, "menuPanel");
-        mainPanel.setPreferredSize(new Dimension(800,800));
-        cardLayout.show(mainPanel, "menuPanel");
-        add(mainPanel);
-        pack();
-        setVisible(true);
-    }
-
-    private void initMenu(){
-        JButton startButton = new JButton("Start");
-        startButton.addActionListener(e -> cardLayout.show(mainPanel, "chessPanel"));
-        menuPanel.add(startButton);
-    }
-
-    private void initWindow(){
-        setTitle("Chess");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        add(chessPanel, "chessPanel");
+        // add(menuPanel, "menuPanel");
+        chessPanel.setPreferredSize(new Dimension(800,800));
+        chessPanel.setBackground(new Color(150,75,0));
+        controlPanel.setBackground(new Color(150,75,0));
+        // cardLayout.show(mainPanel, "menuPanel");
+        // add(mainPanel);
         
     }
+
+
 
     private void initBoard(){
 
@@ -94,19 +79,15 @@ public class ChessView extends JFrame{
         JButton undoButton = new JButton();
         undoButton.setFont(new Font("SansSerif", Font.BOLD, 36));
         undoButton.setText("Undo");
-
-        JButton returnButton = new JButton("Return");
-
-
+        JButton menuButton = new JButton();
+        menuButton.setFont(new Font("SansSerif", Font.BOLD, 36));
+        menuButton.setText("Menu");
         controlButtons.put("Undo", undoButton);
-       
-        returnButton.addActionListener(e -> {
-            cardLayout.show(mainPanel, "menuPanel");
-        });
-
         controlPanel.add(undoButton);
-        controlPanel.add(returnButton);
-        
+        // controlPanel.add(menuButton);
+        menuButton.addActionListener(e -> {
+
+        });
         controlPanel.setPreferredSize(new Dimension(800, 70));
 
     };

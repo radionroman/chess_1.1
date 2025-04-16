@@ -13,19 +13,28 @@ import com.chess.view.ChessView;
 public class ChessController {
     private final ChessView view;
     private final ChessModel model;
-    private HumanPlayer whitePlayer = new HumanPlayer();
-    private HumanPlayer blackPlayer = new HumanPlayer();
-    // private Player blackPlayer = new BotPlayerMinimax();
+    private final Player whitePlayer;
+    private final Player blackPlayer;
 
-    public ChessController(ChessModel model, ChessView view) {
-        this.model = model;
+    public ChessController(Player whitePlayer, Player blackPlayer, ChessView view) {
+        this.model = new ChessModel();
         this.view = view;
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
         view.setBoardClickedListeners((row, col) -> {
             handleClickBoard(row, col);
         });
         view.setControlClickedListener((type) -> handleClickControl(type));
-        view.refresh(model.getRenderState(true));
+        view.refresh(model.getRenderState(isClickable()));
         nextTurn();
+    }
+
+    private boolean isClickable() {
+        PieceColor turnColor = model.getTurnColor();
+        Player current;
+        if (turnColor == PieceColor.WHITE) current = whitePlayer;
+        else current = blackPlayer;
+        return current instanceof HumanPlayer;
     }
 
     private void nextTurn() {
@@ -36,9 +45,9 @@ public class ChessController {
             model.applyMove(move);
             System.out.println("move was applied");
             if (current instanceof BotPlayer)
-                view.refresh(model.getRenderState(false));
+                view.refresh(model.getRenderState(isClickable()));
             else
-                view.refresh(model.getRenderState(true));
+                view.refresh(model.getRenderState(isClickable()));
             System.out.println("view was refreshed");
             if (MoveGenerator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
                 System.out.println("MATE");
@@ -64,7 +73,8 @@ public class ChessController {
     }
 
     public void userMoved(Move move) {
-        whitePlayer.onUserMove(move);
+        Player current = model.getTurnColor() == PieceColor.BLACK ? blackPlayer : whitePlayer;
+        current.onUserMove(move);
     }
 
     private void handleClickBoard(int row, int col) {
@@ -80,18 +90,16 @@ public class ChessController {
                 };
                 Move promotedMove = new Move(move.getFrom(), move.getTo(), move.getGameState(), newType);
                 userMoved(promotedMove);
-                view.refresh(model.getRenderState(true));
-                return;
             });
         }
         if (move != null)
             userMoved(move);
-        view.refresh(model.getRenderState(true));
+        view.refresh(model.getRenderState(isClickable()));
 
     }
 
     private void handleClickControl(String type) {
-        Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
+        // Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
         switch (type) {
             case "Undo" -> {
                 model.undo();
@@ -101,7 +109,7 @@ public class ChessController {
 
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);
         }
-        view.refresh(model.getRenderState(true));
+        view.refresh(model.getRenderState(isClickable()));
 
     }
 

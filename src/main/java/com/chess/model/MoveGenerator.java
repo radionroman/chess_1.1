@@ -32,16 +32,17 @@ public class MoveGenerator {
         List<Move> pieceMoves;
         List<PieceOnSquare> pieces = getPiecesOnSquare(state);
         for (PieceOnSquare pieceOnSquare : pieces) {
-            pieceMoves = pieceOnSquare.getLegalMoves(board, state);
-
+            
             if (pieceOnSquare.getPiece().getPieceType() == PieceType.PAWN) { // promotion and en passant checks
-                moves.addAll(getEnPassantMoves(pieceOnSquare, state));
 
                 if (!getPromotionMoves(pieceOnSquare, state).isEmpty()) {
                     moves.addAll(getPromotionMoves(pieceOnSquare, state));
                     continue;
-                }
+                }                
+                moves.addAll(getEnPassantMoves(pieceOnSquare, state));
+
             }
+            pieceMoves = pieceOnSquare.getLegalMoves(board, state);
 
             moves.addAll(pieceMoves);
             if (pieceOnSquare.getPiece().getPieceType() == PieceType.KING) { // castling checks
@@ -83,18 +84,21 @@ public class MoveGenerator {
                 MoveType.EN_PASSANT));
         return moves;
     }
-//TODO: fix castling
+
     private static List<Move> getCastlingMoves(PieceOnSquare pieceOnSquare, int rookCol, GameState state) {
+        // System.out.println("Castling entered!");
         ArrayList<Move> moves = new ArrayList<>();
         PieceColor color = state.getTurnColor();
         Board board = state.getBoard();
         Piece king = pieceOnSquare.getPiece();
         if (king.hasMoved()) return moves;
+        // System.out.println("King hasnt moved!");
         Square kingSquare = pieceOnSquare.getSquare();
         int kingCol = kingSquare.getCol();
         Square rookSquare = new Square(kingSquare.getRow(), rookCol);
         Piece rook = board.getPieceAt(rookSquare);
         if (rook == null || rook.hasMoved())return moves;
+        // System.out.println("Rook is present and hasnt moved!");
         int start, end;
         
         if (kingCol > rookCol) {
@@ -104,15 +108,16 @@ public class MoveGenerator {
             start = kingCol;
             end = rookCol-1;
         }
-        // System.out.println(start + " " + end);
+        // System.out.println("Checking for castling: " + start + " " + end);
         for (int i = start; i <= end; i++){
             if (board.isCheckPresent(color, new Square(kingSquare.getRow(), i)) || (i != kingCol && !board.isEmptyAt(kingSquare.getRow(), i))) {
+                // System.out.println("Checking for castling failed.");
                 return moves;
             }
         }
         if (kingCol < rookCol)moves.add(new Move(kingSquare, new Square(kingSquare.getRow(), end), state.copy(), MoveType.CASTLING_LONG));
-        else moves.add(new Move(kingSquare, new Square(kingSquare.getRow(), end), state.copy(), MoveType.CASTLING_SHORT));
-        System.out.println("Castling is possible");
+        else moves.add(new Move(kingSquare, new Square(kingSquare.getRow(), start), state.copy(), MoveType.CASTLING_SHORT));
+        // System.out.println("Castling is possible");
         return moves;
 
     }
@@ -124,10 +129,7 @@ public class MoveGenerator {
             return moves;
         int direction = pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? -1 : 1;
         Square to = new Square(from.getRow() + direction, from.getCol());
-        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_BISHOP));
-        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_ROOK));
-        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_KNIGHT));
-        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_QUEEN));
+        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION));
         return moves;
 
     }

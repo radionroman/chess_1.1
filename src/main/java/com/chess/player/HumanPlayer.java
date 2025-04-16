@@ -5,11 +5,12 @@ import java.util.function.Consumer;
 import com.chess.model.ChessModel;
 import com.chess.model.Move;
 
-public class HumanPlayer implements Player {
+public class HumanPlayer extends Player {
     private Consumer<Move> callback;
     public HumanPlayer(){
     }
-
+    
+    @Override
     public void onUserMove(Move move){
         if (callback != null) {
             callback.accept(move);

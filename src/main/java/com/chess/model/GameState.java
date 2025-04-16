@@ -34,8 +34,6 @@ public class GameState {
     public Move getLastMove(){
         return lastMove;
     }
-
-
     // Basic Getters
     public Board getBoard() {
         return board;

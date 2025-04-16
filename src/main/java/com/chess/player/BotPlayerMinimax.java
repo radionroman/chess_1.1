@@ -10,7 +10,7 @@ import com.chess.model.Move;
 import com.chess.model.MoveGenerator;
 import com.chess.model.PieceColor;
 
-public class BotPlayerMinimax implements Player {
+public class BotPlayerMinimax extends Player {
 
     int[][] PAWN_TABLE = {
             { 0, 0, 0, 0, 0, 0, 0, 0 },

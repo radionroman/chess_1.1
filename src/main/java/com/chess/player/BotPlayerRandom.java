@@ -9,7 +9,7 @@ import com.chess.model.GameState;
 import com.chess.model.Move;
 import com.chess.model.MoveGenerator;
 
-public class BotPlayerRandom implements Player{
+public class BotPlayerRandom extends Player{
     Random random = new Random();
 
     public BotPlayerRandom(){

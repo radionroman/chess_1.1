@@ -53,7 +53,8 @@ public class Board {
         Board copyBoard = new Board();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                copyBoard.setPieceAt(i, j, board[i][j]);
+                if (!this.isEmptyAt(i, j))copyBoard.setPieceAt(i, j, this.getPieceAt(i, j).copy());
+                else copyBoard.setPieceAt(i, j, null);
             }
         }
         return copyBoard;
@@ -103,6 +104,9 @@ public class Board {
                 board[from.getRow()][to.getCol()] = null; // capture
                 board[to.getRow()][to.getCol()] = piece;
 
+            }
+            default -> {
+                throw new IllegalArgumentException("No such move type supported: " + type.toString());
             }
         }
     }
