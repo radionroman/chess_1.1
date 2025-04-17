@@ -129,7 +129,10 @@ public class MoveGenerator {
             return moves;
         int direction = pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? -1 : 1;
         Square to = new Square(from.getRow() + direction, from.getCol());
-        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION));
+        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_QUEEN));
+        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_ROOK));
+        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_KNIGHT));
+        moves.add(new Move(from, to, state.copy(), MoveType.PROMOTION_BISHOP));
         return moves;
 
     }

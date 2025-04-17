@@ -65,7 +65,6 @@ public class Board {
         Square to = move.getTo();
         Piece piece = board[from.getRow()][from.getCol()];
         MoveType type = move.getType();
-        piece.setHasMoved();
         switch (type) {
             case DEFAULT -> {
                 board[to.getRow()][to.getCol()] = piece;
@@ -103,12 +102,13 @@ public class Board {
                 board[from.getRow()][from.getCol()] = null;
                 board[from.getRow()][to.getCol()] = null; // capture
                 board[to.getRow()][to.getCol()] = piece;
-
             }
             default -> {
                 throw new IllegalArgumentException("No such move type supported: " + type.toString());
             }
+            
         }
+        board[to.getRow()][to.getCol()].hasMoved();
     }
 
     public boolean isEmptyAt(int row, int col) {

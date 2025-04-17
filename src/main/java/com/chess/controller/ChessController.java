@@ -8,15 +8,15 @@ import com.chess.model.PieceColor;
 import com.chess.player.BotPlayer;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
-import com.chess.view.ChessView;
+import com.chess.view.ChessPanel;
 
 public class ChessController {
-    private final ChessView view;
+    private final ChessPanel view;
     private final ChessModel model;
     private final Player whitePlayer;
     private final Player blackPlayer;
 
-    public ChessController(Player whitePlayer, Player blackPlayer, ChessView view) {
+    public ChessController(Player whitePlayer, Player blackPlayer, ChessPanel view) {
         this.model = new ChessModel();
         this.view = view;
         this.whitePlayer = whitePlayer;
@@ -41,16 +41,12 @@ public class ChessController {
 
         Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
         current.requestMove(model, (move) -> {
-            System.out.println("move was made");
             model.applyMove(move);
-            System.out.println("move was applied");
             if (current instanceof BotPlayer)
                 view.refresh(model.getRenderState(isClickable()));
             else
                 view.refresh(model.getRenderState(isClickable()));
-            System.out.println("view was refreshed");
             if (MoveGenerator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
-                System.out.println("MATE");
                 view.mate(model.getTurnColor().toString());
                 return;
             }
@@ -78,21 +74,27 @@ public class ChessController {
     }
 
     private void handleClickBoard(int row, int col) {
+
+        boolean[][] isActiveSquares = model.getRenderState(true).getSquaresActive();
+        if (!isActiveSquares[row][col]) return;
         Move move = model.processBoardClicked(row, col);
+        
         if (move != null && move.getType().toString().startsWith("PROMOTION")) {
             view.showPromotionDialog(selectedType -> {
                 MoveType newType = switch (selectedType) {
                     case "Queen" -> MoveType.PROMOTION_QUEEN;
-            case "Rook" -> MoveType.PROMOTION_ROOK;
-            case "Bishop" -> MoveType.PROMOTION_BISHOP;
-            case "Knight" -> MoveType.PROMOTION_KNIGHT;
-            default -> MoveType.PROMOTION_QUEEN; // fallback
+                    case "Rook" -> MoveType.PROMOTION_ROOK;
+                    case "Bishop" -> MoveType.PROMOTION_BISHOP;
+                    case "Knight" -> MoveType.PROMOTION_KNIGHT;
+                    default -> MoveType.PROMOTION_QUEEN; // fallback
                 };
                 Move promotedMove = new Move(move.getFrom(), move.getTo(), move.getGameState(), newType);
                 userMoved(promotedMove);
+                view.refresh(model.getRenderState(isClickable()));
             });
         }
-        if (move != null)
+        
+        else if (move != null)
             userMoved(move);
         view.refresh(model.getRenderState(isClickable()));
 

@@ -2,24 +2,26 @@ package com.chess.controller;
 
 import com.chess.player.BotPlayerMinimax;
 import com.chess.player.HumanPlayer;
-import com.chess.view.ChessView;
+import com.chess.view.ChessPanel;
 import com.chess.view.MainView;
 
 public class MainController {
     private ChessController chessController;
-    private ChessView chessView;
+    private ChessPanel chessView;
     private MainView mainView;
 
     public MainController() {
         this.mainView = new MainView();
-        mainView.setUpListeners((type) -> {
+        mainView.getMenuPanel().setUpListeners((type) -> {
             switch (type) {
-                case "PVP" -> chessController = new ChessController(new HumanPlayer(), new HumanPlayer(), mainView.getChessView());
-                case "PVEWhite" -> chessController = new ChessController(new HumanPlayer(), new BotPlayerMinimax(), mainView.getChessView());
-                case "PVEBlack" -> chessController = new ChessController(new BotPlayerMinimax(), new HumanPlayer(), mainView.getChessView());
+                case "PVP" -> chessController = new ChessController(new HumanPlayer(), new HumanPlayer(), mainView.getChessPanel());
+                case "PVEWhite" -> chessController = new ChessController(new HumanPlayer(), new BotPlayerMinimax(), mainView.getChessPanel());
+                case "PVEBlack" -> chessController = new ChessController(new BotPlayerMinimax(), new HumanPlayer(), mainView.getChessPanel());
                 default -> throw new AssertionError();
             }
         });
+
+
     }
 
     
