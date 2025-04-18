@@ -24,6 +24,10 @@ public abstract class Piece {
         this.hasMoved = true;
     }
 
+    public void setHasNotMoved() {
+        this.hasMoved = false;
+    }
+
     public boolean hasMoved() {
         return hasMoved;
     }

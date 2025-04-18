@@ -59,57 +59,6 @@ public class Board {
         }
         return copyBoard;
     }
-    public void movePiece(Move move, PieceColor turnColor) {
-
-        Square from = move.getFrom();
-        Square to = move.getTo();
-        Piece piece = board[from.getRow()][from.getCol()];
-        MoveType type = move.getType();
-        switch (type) {
-            case DEFAULT -> {
-                board[to.getRow()][to.getCol()] = piece;
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_QUEEN -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.QUEEN, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_BISHOP -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.BISHOP, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_ROOK -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.ROOK, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case PROMOTION_KNIGHT -> {
-                board[to.getRow()][to.getCol()] = PieceFactory.createPiece(PieceType.KNIGHT, turnColor);
-                board[from.getRow()][from.getCol()] = null;
-            }
-            case CASTLING_LONG -> {
-                board[from.getRow()][from.getCol()] = null;
-                board[to.getRow()][to.getCol()] = piece;
-                board[to.getRow()][to.getCol() - 1] = board[to.getRow()][to.getCol() + 1];
-                board[to.getRow()][to.getCol() + 1] = null;
-            }
-            case CASTLING_SHORT -> {
-                board[from.getRow()][from.getCol()] = null;
-                board[to.getRow()][to.getCol()] = piece;
-                board[to.getRow()][to.getCol() + 1] = board[to.getRow()][to.getCol() - 1];
-                board[to.getRow()][to.getCol() - 1] = null;
-            }
-            case EN_PASSANT -> {
-                board[from.getRow()][from.getCol()] = null;
-                board[from.getRow()][to.getCol()] = null; // capture
-                board[to.getRow()][to.getCol()] = piece;
-            }
-            default -> {
-                throw new IllegalArgumentException("No such move type supported: " + type.toString());
-            }
-            
-        }
-        board[to.getRow()][to.getCol()].hasMoved();
-    }
 
     public boolean isEmptyAt(int row, int col) {
         return board[row][col] == null;

@@ -1,5 +1,7 @@
 package com.chess.model;
 
+import com.chess.model.moves.Move;
+
 public class GameState {
     private final Board board;
     private PieceColor turnColor;
@@ -22,12 +24,20 @@ public class GameState {
         return gameStateCopy;
     }
 
+    public void switchTurnColor() {
+        turnColor = turnColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
+    }
 
 
     public void movePiece(Move move) {
         lastMove = move;
-        board.movePiece(move, turnColor);
-        turnColor = turnColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+        move.makeMove(board);
+        switchTurnColor();
+    }
+
+    public void undoMove() {
+        lastMove.unMakeMove(board);
 
     }
 

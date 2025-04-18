@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 
+import com.chess.model.moves.Move;
+import com.chess.model.moves.MoveGenerator;
+
 public class ChessModel {
     private final Stack<Move> moveHistory = new Stack<>();
     private GameState gameState;
@@ -57,8 +60,10 @@ public class ChessModel {
             return;
         previousMove = moveHistory.pop();
         System.out.println("Undoing: " + previousMove);
-        this.gameState = previousMove.getGameState().copy();
+        gameState.switchTurnColor();
+        previousMove.unMakeMove(gameState.getBoard());
         clearSelectedSquare();
+        
 
     }
 

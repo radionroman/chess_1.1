@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 import com.chess.model.Board;
 import com.chess.model.ChessModel;
 import com.chess.model.GameState;
-import com.chess.model.Move;
-import com.chess.model.MoveGenerator;
 import com.chess.model.PieceColor;
+import com.chess.model.moves.Move;
+import com.chess.model.moves.MoveGenerator;
 
 public class BotPlayerMinimax extends Player {
 
@@ -84,7 +84,10 @@ public class BotPlayerMinimax extends Player {
             { -50, -30, -30, -30, -30, -30, -30, -50 }
     };
 
-    public BotPlayerMinimax() {
+    private final int depthF;
+
+    public BotPlayerMinimax(int depth) {
+        this.depthF = depth;
     }
 
     private int evaluate(GameState gameState) {
@@ -180,7 +183,7 @@ public class BotPlayerMinimax extends Player {
         for (Move move : legalMoves) {
             GameState child = gameState.copy();
             child.movePiece(move);
-            int value = minimax(child, 3, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for start
+            int value = minimax(child, depthF, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for start
 
             if (gameState.getTurnColor() == PieceColor.WHITE && value > bestValue) {
                 bestValue = value;

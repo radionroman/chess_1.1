@@ -3,6 +3,8 @@ package com.chess.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chess.model.moves.DefaultMove;
+import com.chess.model.moves.Move;
 import com.chess.model.pieces.Piece;
 
 public class PieceOnSquare {
@@ -23,7 +25,7 @@ public class PieceOnSquare {
         List<Square> movesTo = piece.getLegalMoves(board, square.getRow(), square.getCol());
         ArrayList<Move> moves = new ArrayList<>();
         for (Square squareTo : movesTo) {
-            moves.add(new Move(square, squareTo, gameState.copy(), MoveType.DEFAULT));
+            moves.add(new DefaultMove(square, squareTo));
         }
         return moves;
     }

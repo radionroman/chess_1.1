@@ -1,10 +1,11 @@
 package com.chess.controller;
 
 import com.chess.model.ChessModel;
-import com.chess.model.Move;
-import com.chess.model.MoveGenerator;
-import com.chess.model.MoveType;
 import com.chess.model.PieceColor;
+import com.chess.model.moves.Move;
+import com.chess.model.moves.MoveGenerator;
+import com.chess.model.moves.PromotionMove;
+import com.chess.model.pieces.PieceType;
 import com.chess.player.BotPlayer;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
@@ -79,16 +80,16 @@ public class ChessController {
         if (!isActiveSquares[row][col]) return;
         Move move = model.processBoardClicked(row, col);
         
-        if (move != null && move.getType().toString().startsWith("PROMOTION")) {
+        if (move != null && move instanceof PromotionMove) {
             view.showPromotionDialog(selectedType -> {
-                MoveType newType = switch (selectedType) {
-                    case "Queen" -> MoveType.PROMOTION_QUEEN;
-                    case "Rook" -> MoveType.PROMOTION_ROOK;
-                    case "Bishop" -> MoveType.PROMOTION_BISHOP;
-                    case "Knight" -> MoveType.PROMOTION_KNIGHT;
-                    default -> MoveType.PROMOTION_QUEEN; // fallback
+                PieceType newType = switch (selectedType) {
+                    case "Queen" -> PieceType.QUEEN;
+                    case "Rook" -> PieceType.ROOK;
+                    case "Bishop" -> PieceType.BISHOP;
+                    case "Knight" -> PieceType.KNIGHT;
+                    default -> PieceType.QUEEN; // fallback
                 };
-                Move promotedMove = new Move(move.getFrom(), move.getTo(), move.getGameState(), newType);
+                Move promotedMove = new PromotionMove(move.getFrom(), move.getTo(), newType);
                 userMoved(promotedMove);
                 view.refresh(model.getRenderState(isClickable()));
             });

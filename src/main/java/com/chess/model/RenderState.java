@@ -3,6 +3,8 @@ package com.chess.model;
 import java.util.List;
 import java.util.Optional;
 
+import com.chess.model.moves.Move;
+
 public class RenderState {
     private final boolean[][] squaresActive;
     private final String[][] board;

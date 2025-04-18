@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 import com.chess.model.ChessModel;
 import com.chess.model.GameState;
-import com.chess.model.Move;
-import com.chess.model.MoveGenerator;
+import com.chess.model.moves.Move;
+import com.chess.model.moves.MoveGenerator;
 
 public class BotPlayerRandom extends Player{
     Random random = new Random();
