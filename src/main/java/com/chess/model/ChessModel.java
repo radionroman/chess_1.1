@@ -36,9 +36,7 @@ public class ChessModel {
                 }
             }
 
-
             clearSelectedSquare();
-
 
         } else {
             setSelectedSquare(clickedSquare);
@@ -48,11 +46,12 @@ public class ChessModel {
     }
 
     public void applyMove(Move move) {
+        // long started = System.nanoTime();
         gameState.movePiece(move);
         moveHistory.push(move);
+        // long ended = System.nanoTime();
+        // System.out.println(ended - started);
     }
-
-
 
     public void undo() {
         Move previousMove;
@@ -60,13 +59,10 @@ public class ChessModel {
             return;
         previousMove = moveHistory.pop();
         System.out.println("Undoing: " + previousMove);
-        gameState.switchTurnColor();
-        previousMove.unMakeMove(gameState.getBoard());
+        gameState.undoMove();
         clearSelectedSquare();
-        
 
     }
-
 
     // Getters and setters
     public GameState getGameState() {
@@ -94,6 +90,7 @@ public class ChessModel {
     public boolean[][] getIsSelectableSquares() {
         return isSelectableSquares;
     }
+
     public PieceColor getTurnColor() {
         return gameState.getTurnColor();
     }

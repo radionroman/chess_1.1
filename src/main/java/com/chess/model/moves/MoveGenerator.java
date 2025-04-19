@@ -12,18 +12,22 @@ import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.PieceType;
 
 public class MoveGenerator {
-    public MoveGenerator(){
+    public MoveGenerator() {
 
     }
 
+    static long counter = 0;
 
     public static List<Move> getLegalMovesForColor(GameState state) {
+        // System.out.println(counter++);
         PieceColor color = state.getTurnColor();
+        // long start = System.nanoTime();
         List<Move> pseudoLegalMoves = getPseudoLegalMovesForColor(state);
+        // long end = System.nanoTime();
+        // System.out.println(end - start);
         ArrayList<Move> legalMoves = new ArrayList<>();
         GameState testState = state.copy();
         for (Move move : pseudoLegalMoves) {
-            
             testState.movePiece(move);
             if (!testState.getBoard().isCheckPresent(color))
                 legalMoves.add(move);
@@ -38,13 +42,13 @@ public class MoveGenerator {
         List<Move> pieceMoves;
         List<PieceOnSquare> pieces = getPiecesOnSquare(state);
         for (PieceOnSquare pieceOnSquare : pieces) {
-            
+
             if (pieceOnSquare.getPiece().getPieceType() == PieceType.PAWN) { // promotion and en passant checks
 
                 if (!getPromotionMoves(pieceOnSquare, state).isEmpty()) {
                     moves.addAll(getPromotionMoves(pieceOnSquare, state));
                     continue;
-                }                
+                }
                 moves.addAll(getEnPassantMoves(pieceOnSquare, state));
 
             }
@@ -96,32 +100,37 @@ public class MoveGenerator {
         PieceColor color = state.getTurnColor();
         Board board = state.getBoard();
         Piece king = pieceOnSquare.getPiece();
-        if (king.hasMoved()) return moves;
+        if (king.hasMoved())
+            return moves;
         // System.out.println("King hasnt moved!");
         Square kingSquare = pieceOnSquare.getSquare();
         int kingCol = kingSquare.getCol();
         Square rookSquare = new Square(kingSquare.getRow(), rookCol);
         Piece rook = board.getPieceAt(rookSquare);
-        if (rook == null || rook.hasMoved())return moves;
+        if (rook == null || rook.hasMoved())
+            return moves;
         // System.out.println("Rook is present and hasnt moved!");
         int start, end;
-        
+
         if (kingCol > rookCol) {
-            start = rookCol+1;
+            start = rookCol + 1;
             end = kingCol;
         } else {
             start = kingCol;
-            end = rookCol-1;
+            end = rookCol - 1;
         }
         // System.out.println("Checking for castling: " + start + " " + end);
-        for (int i = start; i <= end; i++){
-            if (board.isCheckPresent(color, new Square(kingSquare.getRow(), i)) || (i != kingCol && !board.isEmptyAt(kingSquare.getRow(), i))) {
+        for (int i = start; i <= end; i++) {
+            if (board.isCheckPresent(color, new Square(kingSquare.getRow(), i))
+                    || (i != kingCol && !board.isEmptyAt(kingSquare.getRow(), i))) {
                 // System.out.println("Checking for castling failed.");
                 return moves;
             }
         }
-        if (kingCol < rookCol)moves.add(new CastlingMove(kingSquare, new Square(kingSquare.getRow(), end), true));
-        else moves.add(new CastlingMove(kingSquare, new Square(kingSquare.getRow(), start), false));
+        if (kingCol < rookCol)
+            moves.add(new CastlingMove(kingSquare, new Square(kingSquare.getRow(), end), false));
+        else
+            moves.add(new CastlingMove(kingSquare, new Square(kingSquare.getRow(), start), true));
         // System.out.println("Castling is possible");
         return moves;
 
@@ -148,7 +157,7 @@ public class MoveGenerator {
         ArrayList<PieceOnSquare> pieces = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board.isEmptyAt(i,j))
+                if (board.isEmptyAt(i, j))
                     continue;
                 if (board.getPieceAt(i, j).getPieceColor() != color)
                     continue;

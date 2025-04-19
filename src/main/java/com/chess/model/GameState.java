@@ -29,8 +29,8 @@ public class GameState {
 
     }
 
-
     public void movePiece(Move move) {
+        move.setPreviousMove(lastMove);
         lastMove = move;
         move.makeMove(board);
         switchTurnColor();
@@ -38,12 +38,14 @@ public class GameState {
 
     public void undoMove() {
         lastMove.unMakeMove(board);
-
+        lastMove = lastMove.getPreviousMove();
+        switchTurnColor();
     }
 
-    public Move getLastMove(){
+    public Move getLastMove() {
         return lastMove;
     }
+
     // Basic Getters
     public Board getBoard() {
         return board;
@@ -54,10 +56,5 @@ public class GameState {
     }
 
     // Advanced getters
-
-
-
-
-
 
 }

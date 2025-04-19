@@ -142,31 +142,31 @@ public class BotPlayerMinimax extends Player {
         return value;
     }
 
-    private int minimax(GameState gameState, int depth, boolean maximizingPlayer) {
-        if (depth == 0 || MoveGenerator.getLegalMovesForColor(gameState).isEmpty()) {
-            return evaluate(gameState);
+    private int minimax(GameState child, int depth, boolean maximizingPlayer) {
+        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(child);
+        if (depth == 0 || legalMoves.isEmpty()) {
+            return evaluate(child);
         }
-
-        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(gameState);
 
         if (maximizingPlayer) {
             int maxEval = Integer.MIN_VALUE;
             for (Move move : legalMoves) {
                 // System.out.println(move);
-                GameState child = gameState.copy();
+
                 child.movePiece(move);
 
                 int eval = minimax(child, depth - 1, false); // switch to minimizing
                 maxEval = Math.max(maxEval, eval);
+                child.undoMove();
             }
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
             for (Move move : legalMoves) {
-                GameState child = gameState.copy();
                 child.movePiece(move);
                 int eval = minimax(child, depth - 1, true); // switch to maximizing
                 minEval = Math.min(minEval, eval);
+                child.undoMove();
             }
             return minEval;
         }
@@ -179,11 +179,11 @@ public class BotPlayerMinimax extends Player {
 
         Move bestMove = null;
         int bestValue = (gameState.getTurnColor() == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-
+        GameState child = gameState.copy();
         for (Move move : legalMoves) {
-            GameState child = gameState.copy();
             child.movePiece(move);
-            int value = minimax(child, depthF, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for start
+            int value = minimax(child, depthF, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for
+                                                                                              // start
 
             if (gameState.getTurnColor() == PieceColor.WHITE && value > bestValue) {
                 bestValue = value;
@@ -192,6 +192,7 @@ public class BotPlayerMinimax extends Player {
                 bestValue = value;
                 bestMove = move;
             }
+            child.undoMove();
         }
 
         if (bestMove == null && !legalMoves.isEmpty()) {
