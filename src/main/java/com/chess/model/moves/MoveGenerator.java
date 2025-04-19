@@ -1,5 +1,8 @@
 package com.chess.model.moves;
 
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +59,7 @@ public class MoveGenerator {
 
             moves.addAll(pieceMoves);
             if (pieceOnSquare.getPiece().getPieceType() == PieceType.KING) { // castling checks
+
                 moves.addAll(getCastlingMoves(pieceOnSquare, 0, state));
                 moves.addAll(getCastlingMoves(pieceOnSquare, 7, state));
             }
@@ -139,14 +143,17 @@ public class MoveGenerator {
     private static List<Move> getPromotionMoves(PieceOnSquare pieceOnSquare, GameState state) {
         ArrayList<Move> moves = new ArrayList<>();
         Square from = pieceOnSquare.getSquare();
-        if (from.getRow() != (pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? 1 : 6))
+        Piece pawn = pieceOnSquare.getPiece();
+        if (from.getRow() != (pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? 1 : BOARD_ROWS - 2))
             return moves;
-        int direction = pieceOnSquare.getPiece().getPieceColor() == PieceColor.WHITE ? -1 : 1;
-        Square to = new Square(from.getRow() + direction, from.getCol());
-        moves.add(new PromotionMove(from, to, PieceType.QUEEN));
-        moves.add(new PromotionMove(from, to, PieceType.ROOK));
-        moves.add(new PromotionMove(from, to, PieceType.KNIGHT));
-        moves.add(new PromotionMove(from, to, PieceType.BISHOP));
+        List<Square> squaresTo = pieceOnSquare.getLegalMovesTo(state.getBoard());
+        for (Square square : squaresTo) {
+            moves.add(new PromotionMove(from, square, PieceType.QUEEN));
+            moves.add(new PromotionMove(from, square, PieceType.ROOK));
+            moves.add(new PromotionMove(from, square, PieceType.KNIGHT));
+            moves.add(new PromotionMove(from, square, PieceType.BISHOP));
+        }
+
         return moves;
 
     }
@@ -155,8 +162,8 @@ public class MoveGenerator {
         PieceColor color = state.getTurnColor();
         Board board = state.getBoard();
         ArrayList<PieceOnSquare> pieces = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++) {
                 if (board.isEmptyAt(i, j))
                     continue;
                 if (board.getPieceAt(i, j).getPieceColor() != color)

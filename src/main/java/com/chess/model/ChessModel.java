@@ -6,11 +6,12 @@ import java.util.Stack;
 
 import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveGenerator;
+import static com.chess.utils.Constants.*;
 
 public class ChessModel {
     private final Stack<Move> moveHistory = new Stack<>();
     private GameState gameState;
-    private final boolean[][] isSelectableSquares = new boolean[8][8];
+    private final boolean[][] isSelectableSquares = new boolean[BOARD_ROWS][BOARD_COLS];
     private Optional<Square> selectedSquare = Optional.empty();
 
     public ChessModel() {

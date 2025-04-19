@@ -1,5 +1,7 @@
 package com.chess.model;
 
+import static com.chess.utils.Constants.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +27,7 @@ public class RenderState {
                         { lastMove.getFrom().getRow(), lastMove.getFrom().getCol() },
                         { lastMove.getTo().getRow(), lastMove.getTo().getCol() },
                 };
-        boolean[][] tempSquaresActive = new boolean[8][8];
+        boolean[][] tempSquaresActive = new boolean[BOARD_ROWS][BOARD_COLS];
         this.board = tempBoard;
         if (!allowClicks) {
             this.squaresActive = tempSquaresActive;

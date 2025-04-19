@@ -1,5 +1,8 @@
 package com.chess.player;
 
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -94,8 +97,8 @@ public class BotPlayerMinimax extends Player {
 
         int value = 0;
         Board board = gameState.getBoard();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++) {
                 if (board.isEmptyAt(i, j))
                     continue;
                 switch (board.getPieceAt(i, j).getPieceType()) {

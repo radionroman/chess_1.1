@@ -1,5 +1,8 @@
 package com.chess.model.pieces;
 
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
+
 import java.util.List;
 
 import com.chess.model.Board;
@@ -42,7 +45,8 @@ public abstract class Piece {
 
     public Piece copy() {
         Piece copyPiece = PieceFactory.createPiece(type, color);
-        if (this.hasMoved)copyPiece.setHasMoved();
+        if (this.hasMoved)
+            copyPiece.setHasMoved();
         return copyPiece;
     }
 
@@ -69,7 +73,7 @@ public abstract class Piece {
     public abstract List<Square> getLegalMoves(Board board, int row, int col);
 
     protected boolean isInsideBoard(int r, int c) {
-        return r >= 0 && c >= 0 && r < 8 && c < 8;
+        return r >= 0 && c >= 0 && r < BOARD_ROWS && c < BOARD_COLS;
     }
 
     public PieceColor getColor() {

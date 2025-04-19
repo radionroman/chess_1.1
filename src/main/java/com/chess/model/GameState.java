@@ -1,6 +1,7 @@
 package com.chess.model;
 
 import com.chess.model.moves.Move;
+import static com.chess.utils.Constants.*;
 
 public class GameState {
     private final Board board;
@@ -9,7 +10,7 @@ public class GameState {
 
     public GameState() {
         board = new Board();
-        board.init();
+        board.setup(DEFAULT_BOARD);
         turnColor = PieceColor.WHITE;
     }
 
