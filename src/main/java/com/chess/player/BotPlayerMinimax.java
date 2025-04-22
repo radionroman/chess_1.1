@@ -11,7 +11,7 @@ import com.chess.model.ChessModel;
 import com.chess.model.GameState;
 import com.chess.model.PieceColor;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveGenerator;
+import com.chess.model.moves.MoveValidator;
 
 public class BotPlayerMinimax extends Player {
 
@@ -146,7 +146,7 @@ public class BotPlayerMinimax extends Player {
     }
 
     private int minimax(GameState child, int depth, boolean maximizingPlayer) {
-        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(child);
+        List<Move> legalMoves = MoveValidator.getLegalMovesForColor(child);
         if (depth == 0 || legalMoves.isEmpty()) {
             return evaluate(child);
         }
@@ -178,7 +178,7 @@ public class BotPlayerMinimax extends Player {
     @Override
     public void requestMove(ChessModel model, Consumer<Move> callback) {
         GameState gameState = model.getGameState();
-        List<Move> legalMoves = MoveGenerator.getLegalMovesForColor(gameState);
+        List<Move> legalMoves = MoveValidator.getLegalMovesForColor(gameState);
 
         Move bestMove = null;
         int bestValue = (gameState.getTurnColor() == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;

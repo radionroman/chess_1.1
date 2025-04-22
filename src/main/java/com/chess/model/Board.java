@@ -1,11 +1,7 @@
 package com.chess.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.PieceFactory;
-import com.chess.model.pieces.PieceType;
 import static com.chess.utils.Constants.*;
 
 public class Board {
@@ -64,48 +60,5 @@ public class Board {
     }
 
     // Game rules
-    public boolean isCheckPresent(PieceColor color) {
-        PieceOnSquare king = null;
-        List<PieceOnSquare> myPieces = getPiecesOnSquare(color);
-        for (PieceOnSquare pieceOnSquare : myPieces) {
-            if (pieceOnSquare.getPiece().getPieceType() == PieceType.KING) {
-                king = pieceOnSquare;
-            }
-        }
-        List<PieceOnSquare> enemyPieces = getPiecesOnSquare(
-                color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE);
-        if (king == null)
-            return false;
-        for (PieceOnSquare pieceOnSquare : enemyPieces) {
-            if (pieceOnSquare.getLegalMovesTo(this).contains(king.getSquare()))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean isCheckPresent(PieceColor color, Square square) {
-
-        List<PieceOnSquare> enemyPieces = getPiecesOnSquare(
-                color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE);
-        for (PieceOnSquare pieceOnSquare : enemyPieces) {
-            if (pieceOnSquare.getLegalMovesTo(this).contains(square))
-                return true;
-        }
-        return false;
-    }
-
-    public List<PieceOnSquare> getPiecesOnSquare(PieceColor color) {
-        ArrayList<PieceOnSquare> pieces = new ArrayList<>();
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            for (int j = 0; j < BOARD_COLS; j++) {
-                if (this.isEmptyAt(i, j))
-                    continue;
-                if (this.getPieceAt(i, j).getPieceColor() != color)
-                    continue;
-                pieces.add(new PieceOnSquare(this.getPieceAt(i, j), new Square(i, j)));
-            }
-        }
-        return pieces;
-    }
 
 }

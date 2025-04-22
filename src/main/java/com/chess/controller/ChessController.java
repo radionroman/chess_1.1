@@ -3,7 +3,7 @@ package com.chess.controller;
 import com.chess.model.ChessModel;
 import com.chess.model.PieceColor;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveGenerator;
+import com.chess.model.moves.MoveValidator;
 import com.chess.model.moves.PromotionMove;
 import com.chess.model.pieces.PieceType;
 import com.chess.player.BotPlayer;
@@ -33,8 +33,10 @@ public class ChessController {
     private boolean isClickable() {
         PieceColor turnColor = model.getTurnColor();
         Player current;
-        if (turnColor == PieceColor.WHITE) current = whitePlayer;
-        else current = blackPlayer;
+        if (turnColor == PieceColor.WHITE)
+            current = whitePlayer;
+        else
+            current = blackPlayer;
         return current instanceof HumanPlayer;
     }
 
@@ -47,7 +49,7 @@ public class ChessController {
                 view.refresh(model.getRenderState(isClickable()));
             else
                 view.refresh(model.getRenderState(isClickable()));
-            if (MoveGenerator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
+            if (MoveValidator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
                 view.mate(model.getTurnColor().toString());
                 return;
             }
@@ -77,9 +79,10 @@ public class ChessController {
     private void handleClickBoard(int row, int col) {
 
         boolean[][] isActiveSquares = model.getRenderState(true).getSquaresActive();
-        if (!isActiveSquares[row][col]) return;
+        if (!isActiveSquares[row][col])
+            return;
         Move move = model.processBoardClicked(row, col);
-        
+
         if (move != null && move instanceof PromotionMove) {
             view.showPromotionDialog(selectedType -> {
                 PieceType newType = switch (selectedType) {
@@ -94,7 +97,7 @@ public class ChessController {
                 view.refresh(model.getRenderState(isClickable()));
             });
         }
-        
+
         else if (move != null)
             userMoved(move);
         view.refresh(model.getRenderState(isClickable()));
@@ -102,13 +105,12 @@ public class ChessController {
     }
 
     private void handleClickControl(String type) {
-        // Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
+
         switch (type) {
             case "Undo" -> {
                 model.undo();
                 model.undo();
             }
-
 
             default -> throw new IllegalArgumentException("Unknown piece type: " + type);
         }

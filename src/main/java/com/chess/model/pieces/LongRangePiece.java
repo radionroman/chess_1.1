@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.chess.model.Board;
+import com.chess.model.GameState;
 import com.chess.model.PieceColor;
 import com.chess.model.Square;
+import com.chess.model.moves.DefaultMove;
+import com.chess.model.moves.Move;
 
 public abstract class LongRangePiece extends Piece {
     public LongRangePiece(PieceColor color, PieceType type, int rank) {
@@ -16,19 +19,21 @@ public abstract class LongRangePiece extends Piece {
     protected abstract int[][] getMoveDirections();
 
     @Override
-    public List<Square> getLegalMoves(Board board, int row, int col) {
+    public List<Move> getPseudoLegalMoves(GameState state, int row, int col) {
+        Board board = state.getBoard();
         int[][] moveDirection = getMoveDirections();
-        List<Square> moves = new ArrayList<>();
+        List<Move> moves = new ArrayList<>();
+        Square from = new Square(row, col);
         for (int[] dir : moveDirection) {
             int r = row + dir[0];
             int c = col + dir[1];
 
             while (isInsideBoard(r, c)) {
-                if (board.isEmptyAt(r,c)) {
-                    moves.add(new Square(r, c));
+                if (board.isEmptyAt(r, c)) {
+                    moves.add(new DefaultMove(from, new Square(r, c)));
                 } else {
                     if (board.getPieceAt(r, c).getPieceColor() != this.getPieceColor()) {
-                        moves.add(new Square(r, c));
+                        moves.add(new DefaultMove(from, new Square(r, c)));
                     }
                     break;
                 }

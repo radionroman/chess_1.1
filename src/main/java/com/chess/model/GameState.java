@@ -47,7 +47,6 @@ public class GameState {
         return lastMove;
     }
 
-    // Basic Getters
     public Board getBoard() {
         return board;
     }
@@ -55,7 +54,5 @@ public class GameState {
     public PieceColor getTurnColor() {
         return turnColor;
     }
-
-    // Advanced getters
 
 }

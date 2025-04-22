@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Stack;
 
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveGenerator;
+import com.chess.model.moves.MoveValidator;
 import static com.chess.utils.Constants.*;
 
 public class ChessModel {
@@ -28,7 +28,7 @@ public class ChessModel {
 
             if (!clickedSquare.equals(selectedSquare.get())) {
 
-                moves = MoveGenerator.getLegalMovesForColor(gameState);
+                moves = MoveValidator.getLegalMovesForColor(gameState);
 
                 for (Move legalMove : moves) {
                     if (legalMove.getFrom().equals(selectedSquare.get()) && legalMove.getTo().equals(clickedSquare)) {
@@ -72,7 +72,7 @@ public class ChessModel {
 
     public RenderState getRenderState(boolean allowClicks) {
 
-        return new RenderState(MoveGenerator.getLegalMovesForColor(gameState), gameState.getBoard(),
+        return new RenderState(MoveValidator.getLegalMovesForColor(gameState), gameState.getBoard(),
                 moveHistory.empty() ? null : moveHistory.peek(), selectedSquare, allowClicks);
     }
 
