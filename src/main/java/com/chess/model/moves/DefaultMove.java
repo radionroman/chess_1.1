@@ -10,7 +10,7 @@ public class DefaultMove extends Move {
         super(from, to);
     }
 
-    private boolean previousHasMoved;
+   
 
     @Override
     public void makeMove(Board board) {
@@ -20,7 +20,7 @@ public class DefaultMove extends Move {
         captured = board.getPieceAt(to);
         board.setPieceAt(to, piece);
         board.setPieceAt(from, null);
-        previousHasMoved = board.getPieceAt(to).hasMoved();
+        setPreviousHasMoved(board.getPieceAt(to).hasMoved()); 
         board.getPieceAt(to).setHasMoved();
     }
 
@@ -31,7 +31,7 @@ public class DefaultMove extends Move {
         Piece piece = board.getPieceAt(to);
         board.setPieceAt(to, captured);
         board.setPieceAt(from, piece);
-        if (!previousHasMoved)
+        if (!isPreviousHasMoved())
             board.getPieceAt(from).setHasNotMoved();
     }
 

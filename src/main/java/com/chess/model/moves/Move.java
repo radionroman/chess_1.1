@@ -9,7 +9,7 @@ public abstract class Move {
     private final Square to;
     protected Piece captured = null;
     private Move previousMove = null;
-
+    private boolean previousHasMoved;
     public Move(Square from, Square to) {
         this.from = from;
         this.to = to;
@@ -40,5 +40,13 @@ public abstract class Move {
     public abstract void makeMove(Board board);
 
     public abstract void unMakeMove(Board board);
+
+    public boolean isPreviousHasMoved() {
+        return previousHasMoved;
+    }
+
+    public void setPreviousHasMoved(boolean previousHasMoved) {
+        this.previousHasMoved = previousHasMoved;
+    }
 
 }

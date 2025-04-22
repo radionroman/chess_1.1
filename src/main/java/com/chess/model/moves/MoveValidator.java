@@ -1,8 +1,5 @@
 package com.chess.model.moves;
 
-import static com.chess.utils.Constants.BOARD_COLS;
-import static com.chess.utils.Constants.BOARD_ROWS;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +8,14 @@ import com.chess.model.GameState;
 import com.chess.model.PieceColor;
 import com.chess.model.Square;
 import com.chess.model.pieces.King;
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class MoveValidator {
     public MoveValidator() {
 
     }
 
-    static long counter = 0;
 
     public static List<Move> getLegalMovesForColor(GameState state) {
         // System.out.println(counter++);
@@ -27,13 +25,13 @@ public class MoveValidator {
         // long end = System.nanoTime();
         // System.out.println(end - start);
         ArrayList<Move> legalMoves = new ArrayList<>();
-        GameState testState = state.copy();
+
         for (Move move : pseudoLegalMoves) {
-            testState.movePiece(move);
-            if (!isSquareAttacked(color, testState, null))
+            state.makeMove(move);
+            if (!isSquareAttacked(color, state, null))
                 legalMoves.add(move);
 
-            testState.undoMove();
+            state.undoMove();
         }
         return legalMoves;
     }

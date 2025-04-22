@@ -1,7 +1,7 @@
 package com.chess.model;
 
 import com.chess.model.moves.Move;
-import static com.chess.utils.Constants.*;
+import static com.chess.utils.Constants.DEFAULT_BOARD;
 
 public class GameState {
     private final Board board;
@@ -14,33 +14,41 @@ public class GameState {
         turnColor = PieceColor.WHITE;
     }
 
-    public GameState(Board board, PieceColor turnColor, Move lastMove) {
-        this.board = board.copy();
-        this.turnColor = turnColor;
-        this.lastMove = lastMove;
-    }
-
-    public GameState copy() {
-        GameState gameStateCopy = new GameState(board, turnColor, lastMove);
-        return gameStateCopy;
-    }
-
     public void switchTurnColor() {
         turnColor = turnColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
 
     }
 
-    public void movePiece(Move move) {
-        move.setPreviousMove(lastMove);
-        lastMove = move;
-        move.makeMove(board);
-        switchTurnColor();
+    public void makeMove(Move move) {
+        Move oldLast = lastMove;
+        PieceColor oldColor = turnColor;
+        try {
+            move.setPreviousMove(lastMove);
+            lastMove = move;
+            move.makeMove(board);
+            switchTurnColor();
+        } catch (RuntimeException e) {
+            move.unMakeMove(board);
+            move.setPreviousMove(null);
+            turnColor = oldColor;
+            lastMove = oldLast;
+            throw e;
+        }
     }
 
     public void undoMove() {
-        lastMove.unMakeMove(board);
-        lastMove = lastMove.getPreviousMove();
-        switchTurnColor();
+        Move oldLast = lastMove;
+        PieceColor oldColor = turnColor;
+        try {
+            lastMove.unMakeMove(board);
+            lastMove = lastMove.getPreviousMove();
+            switchTurnColor();
+        } catch (RuntimeException e) {
+            oldLast.makeMove(board);
+            lastMove = oldLast;
+            turnColor = oldColor;
+            throw e;
+        }
     }
 
     public Move getLastMove() {

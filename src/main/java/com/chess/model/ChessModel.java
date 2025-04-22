@@ -6,7 +6,8 @@ import java.util.Stack;
 
 import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveValidator;
-import static com.chess.utils.Constants.*;
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class ChessModel {
     private final Stack<Move> moveHistory = new Stack<>();
@@ -47,11 +48,8 @@ public class ChessModel {
     }
 
     public void applyMove(Move move) {
-        // long started = System.nanoTime();
-        gameState.movePiece(move);
+        gameState.makeMove(move);
         moveHistory.push(move);
-        // long ended = System.nanoTime();
-        // System.out.println(ended - started);
     }
 
     public void undo() {

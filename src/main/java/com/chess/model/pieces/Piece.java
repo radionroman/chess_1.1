@@ -1,13 +1,12 @@
 package com.chess.model.pieces;
 
-import static com.chess.utils.Constants.BOARD_COLS;
-import static com.chess.utils.Constants.BOARD_ROWS;
-
 import java.util.List;
 
 import com.chess.model.GameState;
 import com.chess.model.PieceColor;
 import com.chess.model.moves.Move;
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
 
 public abstract class Piece {
     private final PieceColor color;
@@ -35,13 +34,6 @@ public abstract class Piece {
 
     public PieceType getPieceType() {
         return type;
-    }
-
-    public Piece copy() {
-        Piece copyPiece = PieceFactory.createPiece(type, color);
-        if (this.hasMoved)
-            copyPiece.setHasMoved();
-        return copyPiece;
     }
 
     public String getUnicodeSymbol() {

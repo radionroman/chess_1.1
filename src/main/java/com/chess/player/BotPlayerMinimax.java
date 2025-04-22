@@ -1,8 +1,5 @@
 package com.chess.player;
 
-import static com.chess.utils.Constants.BOARD_COLS;
-import static com.chess.utils.Constants.BOARD_ROWS;
-
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -12,6 +9,8 @@ import com.chess.model.GameState;
 import com.chess.model.PieceColor;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveValidator;
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class BotPlayerMinimax extends Player {
 
@@ -156,7 +155,7 @@ public class BotPlayerMinimax extends Player {
             for (Move move : legalMoves) {
                 // System.out.println(move);
 
-                child.movePiece(move);
+                child.makeMove(move);
 
                 int eval = minimax(child, depth - 1, false); // switch to minimizing
                 maxEval = Math.max(maxEval, eval);
@@ -166,7 +165,7 @@ public class BotPlayerMinimax extends Player {
         } else {
             int minEval = Integer.MAX_VALUE;
             for (Move move : legalMoves) {
-                child.movePiece(move);
+                child.makeMove(move);
                 int eval = minimax(child, depth - 1, true); // switch to maximizing
                 minEval = Math.min(minEval, eval);
                 child.undoMove();
@@ -182,9 +181,9 @@ public class BotPlayerMinimax extends Player {
 
         Move bestMove = null;
         int bestValue = (gameState.getTurnColor() == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        GameState child = gameState.copy();
+        GameState child = gameState;
         for (Move move : legalMoves) {
-            child.movePiece(move);
+            child.makeMove(move);
             int value = minimax(child, depthF, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for
                                                                                               // start
 

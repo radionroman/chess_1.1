@@ -2,7 +2,8 @@ package com.chess.model;
 
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.PieceFactory;
-import static com.chess.utils.Constants.*;
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class Board {
     Piece[][] board;
@@ -36,19 +37,6 @@ public class Board {
 
     public void setPieceAt(Square square, Piece piece) {
         this.board[square.getRow()][square.getCol()] = piece;
-    }
-
-    public Board copy() {
-        Board copyBoard = new Board();
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            for (int j = 0; j < BOARD_COLS; j++) {
-                if (!this.isEmptyAt(i, j))
-                    copyBoard.setPieceAt(i, j, this.getPieceAt(i, j).copy());
-                else
-                    copyBoard.setPieceAt(i, j, null);
-            }
-        }
-        return copyBoard;
     }
 
     public boolean isEmptyAt(int row, int col) {

@@ -6,8 +6,6 @@ import com.chess.model.pieces.PieceType;
 
 public class Constants {
 
-    public static final int BOARD_ROWS = 8;
-    public static final int BOARD_COLS = 8;
 
     public static final PiecePlacement[][] DEFAULT_BOARD = {
             {
@@ -56,5 +54,8 @@ public class Constants {
             }
 
     };
+    public static final int BOARD_ROWS = DEFAULT_BOARD.length;
+    public static final int BOARD_COLS = DEFAULT_BOARD[0].length;
+
 
 }

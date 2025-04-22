@@ -9,15 +9,15 @@ import com.chess.model.pieces.PieceType;
 import com.chess.player.BotPlayer;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
-import com.chess.view.ChessPanel;
+import com.chess.view.GamePanel;
 
 public class ChessController {
-    private final ChessPanel view;
+    private final GamePanel view;
     private final ChessModel model;
     private final Player whitePlayer;
     private final Player blackPlayer;
 
-    public ChessController(Player whitePlayer, Player blackPlayer, ChessPanel view) {
+    public ChessController(Player whitePlayer, Player blackPlayer, GamePanel view) {
         this.model = new ChessModel();
         this.view = view;
         this.whitePlayer = whitePlayer;

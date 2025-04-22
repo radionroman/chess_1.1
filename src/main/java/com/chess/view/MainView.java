@@ -10,25 +10,24 @@ public class MainView extends JFrame{
     private final JPanel mainPanel;
     private final MenuPanel menuPanel;
 
-    private final ChessPanel chessPanel;
+    private final GamePanel gamePanel;
      
     public MainView(){
         menuPanel = new MenuPanel();
-        chessPanel = new ChessPanel();
+        gamePanel = new GamePanel();
         mainPanel = new JPanel(ScreenManager.getLayout());
         ScreenManager.setPanel(mainPanel);
        
-        
         mainPanel.add(menuPanel, Screens.MENU.toString());
-        mainPanel.add(chessPanel, Screens.GAMEBOARD.toString());
+        mainPanel.add(gamePanel, Screens.GAMEBOARD.toString());
         add(mainPanel);
         pack();
         setVisible(true);
     }
     
 
-    public ChessPanel getChessPanel() {
-        return chessPanel;
+    public GamePanel getGamePanel() {
+        return gamePanel;
     }
 
     public MenuPanel getMenuPanel() {
