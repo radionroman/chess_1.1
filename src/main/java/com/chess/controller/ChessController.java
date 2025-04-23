@@ -10,6 +10,8 @@ import com.chess.player.BotPlayer;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.GamePanel;
+import com.chess.view.ScreenManager;
+import com.chess.view.Screens;
 
 public class ChessController {
     private final GamePanel view;
@@ -111,8 +113,11 @@ public class ChessController {
                 model.undo();
                 model.undo();
             }
+            case "Menu" -> {
+                ScreenManager.showScreen(Screens.MENU);
+            }
 
-            default -> throw new IllegalArgumentException("Unknown piece type: " + type);
+            default -> throw new IllegalArgumentException("Unknown Control button type: " + type);
         }
         view.refresh(model.getRenderState(isClickable()));
 

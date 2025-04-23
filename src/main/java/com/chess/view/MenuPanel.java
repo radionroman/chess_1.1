@@ -14,9 +14,9 @@ import javax.swing.JPanel;
 public class MenuPanel extends JPanel{
     private final JButton PVPButton, PVEWhiteButton, PVEBlackButton;
     public MenuPanel() {
-        PVPButton = new JButton("PVP");
-        PVEWhiteButton = new JButton("PVE White");
-        PVEBlackButton = new JButton("PVE Black");
+        PVPButton = Style.MenuButton.create("PVP");
+        PVEWhiteButton = Style.MenuButton.create("PVE White");
+        PVEBlackButton = Style.MenuButton.create("PVE Black");
         setBackground(new Color(150,75,0));
         setOpaque(true);
         // Add vertical glue to center buttons vertically

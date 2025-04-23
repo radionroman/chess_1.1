@@ -3,11 +3,12 @@ package com.chess.view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,15 +26,14 @@ import static com.chess.view.Style.CHESS_PIECE_FONT;
 public class BoardPanel extends JPanel{
     private final JButton[][] squares = new JButton[BOARD_ROWS][BOARD_COLS];
     private BiConsumer<Integer, Integer> activeListener;
-    private final JPanel innerPanel;
+    private final JPanel boardPanel;
 
     public BoardPanel() {
         
-        innerPanel = new JPanel();
-        innerPanel.setLayout(new GridLayout(8,8));
-        innerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        innerPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-        setLayout(new BoxLayout(BoxLayout.X_AXIS));
+        boardPanel = new JPanel();
+        boardPanel.setLayout(new GridLayout(8,8));
+        boardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        boardPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
 
@@ -46,13 +46,22 @@ public class BoardPanel extends JPanel{
                 button.setOpaque(true);
                 squares[i][j] = button;
                 
-                innerPanel.add(button);
+                boardPanel.add(button);
                 
             }
         }
-
-        add(innerPanel);
-        innerPanel.setPreferredSize(new Dimension(640, 640));
+        
+        add(boardPanel);
+        boardPanel.setPreferredSize(new Dimension(560,560));
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int size = Math.min(getWidth(), getHeight());
+                size = Math.max(size, 560);
+                boardPanel.setPreferredSize(new Dimension((int) Math.floor(size * 0.9), (int) Math.floor(size * 0.9)));
+                boardPanel.revalidate();
+            }
+        });
     }
 
         // Listeners
