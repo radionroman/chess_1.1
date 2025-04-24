@@ -1,6 +1,7 @@
 package com.chess.player;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.chess.model.Board;
@@ -87,9 +88,14 @@ public class BotPlayerMinimax extends Player {
     };
 
     private final int depthF;
+    private BiConsumer<Integer, Integer> progressBar;
 
     public BotPlayerMinimax(int depth) {
         this.depthF = depth;
+    }
+
+    public void connectProgressBar(BiConsumer<Integer, Integer> l){
+        progressBar = l;
     }
 
     private int evaluate(GameState gameState) {
@@ -178,23 +184,28 @@ public class BotPlayerMinimax extends Player {
     public void requestMove(ChessModel model, Consumer<Move> callback) {
         GameState gameState = model.getGameState();
         List<Move> legalMoves = MoveValidator.getLegalMovesForColor(gameState);
-
+        PieceColor turnColor = gameState.getTurnColor();
         Move bestMove = null;
-        int bestValue = (gameState.getTurnColor() == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        int bestValue = (turnColor == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         GameState child = gameState;
+        int totalMoves = legalMoves.size();
+        int moveNumber = 0;
+        progressBar.accept(moveNumber, totalMoves);
         for (Move move : legalMoves) {
             child.makeMove(move);
-            int value = minimax(child, depthF, gameState.getTurnColor() == PieceColor.BLACK); // depth 3 is good for
+            int value = minimax(child, depthF, turnColor == PieceColor.BLACK); // depth 3 is good for
                                                                                               // start
 
-            if (gameState.getTurnColor() == PieceColor.WHITE && value > bestValue) {
+            if (turnColor == PieceColor.WHITE && value > bestValue) {
                 bestValue = value;
                 bestMove = move;
-            } else if (gameState.getTurnColor() == PieceColor.BLACK && value < bestValue) {
+            } else if (turnColor == PieceColor.BLACK && value < bestValue) {
                 bestValue = value;
                 bestMove = move;
             }
             child.undoMove();
+            moveNumber++;
+            progressBar.accept(moveNumber, totalMoves);
         }
 
         if (bestMove == null && !legalMoves.isEmpty()) {
@@ -202,6 +213,7 @@ public class BotPlayerMinimax extends Player {
         }
 
         callback.accept(bestMove);
+        
     }
 
 }

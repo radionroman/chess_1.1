@@ -20,11 +20,14 @@ public class ControlPanel extends JPanel{
         JButton menuButton = Style.ControlButton.create("Menu");
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-gbc.weightx = 1.0;
+        gbc.weightx = 1.0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        // gbc.anchor = GridBagConstraints.LINE_START;
         add(menuButton, gbc);
         gbc.gridx = 3;
         gbc.gridy =0;
+        // gbc.anchor = GridBagConstraints.LINE_END;
         add(undoButton, gbc);
        
 

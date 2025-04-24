@@ -7,6 +7,7 @@ import com.chess.model.moves.MoveValidator;
 import com.chess.model.moves.PromotionMove;
 import com.chess.model.pieces.PieceType;
 import com.chess.player.BotPlayer;
+import com.chess.player.BotPlayerMinimax;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.GamePanel;
@@ -24,12 +25,25 @@ public class ChessController {
         this.view = view;
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
+        setBotListener();
         view.setBoardClickedListeners((row, col) -> {
             handleClickBoard(row, col);
         });
         view.setControlClickedListener((type) -> handleClickControl(type));
         view.refresh(model.getRenderState(isClickable()));
-        nextTurn();
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            if (whitePlayer instanceof BotPlayer) {
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(200); // allow UI to update
+                    } catch (InterruptedException ex) {
+                    }
+                    javax.swing.SwingUtilities.invokeLater(this::nextTurn);
+                }).start();
+            } else {
+                nextTurn(); // Immediate for human
+            }
+        });
     }
 
     private boolean isClickable() {
@@ -120,6 +134,21 @@ public class ChessController {
             default -> throw new IllegalArgumentException("Unknown Control button type: " + type);
         }
         view.refresh(model.getRenderState(isClickable()));
+
+    }
+
+    private void setBotListener() {
+        BotPlayerMinimax botPlayer = null;
+        if (whitePlayer instanceof BotPlayerMinimax botPlayer1) {
+            botPlayer = botPlayer1;
+        }
+        else if (blackPlayer instanceof BotPlayerMinimax botPlayer1) {
+            botPlayer = botPlayer1;
+        }
+
+        if (botPlayer != null) botPlayer.connectProgressBar((Integer moveNumber, Integer totalMoves) -> {
+            System.out.println(moveNumber + " " + totalMoves);
+        });
 
     }
 
