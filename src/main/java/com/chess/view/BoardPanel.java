@@ -33,7 +33,6 @@ public class BoardPanel extends JPanel{
         boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(8,8));
         boardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        boardPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
 

@@ -20,7 +20,7 @@ public class DefaultMove extends Move {
         captured = board.getPieceAt(to);
         board.setPieceAt(to, piece);
         board.setPieceAt(from, null);
-        setPreviousHasMoved(board.getPieceAt(to).hasMoved()); 
+        setPreviousHasMoved(piece.hasMoved()); 
         board.getPieceAt(to).setHasMoved();
     }
 

@@ -19,7 +19,7 @@ public class GameState {
 
     }
 
-    public void makeMove(Move move) {
+    public synchronized  void makeMove(Move move) {
         Move oldLast = lastMove;
         PieceColor oldColor = turnColor;
         try {
@@ -27,23 +27,24 @@ public class GameState {
             lastMove = move;
             move.makeMove(board);
             switchTurnColor();
-        } catch (RuntimeException e) {
-            move.unMakeMove(board);
-            move.setPreviousMove(null);
-            turnColor = oldColor;
-            lastMove = oldLast;
+        } catch (Exception e) {
+            System.out.println(move);
+            // move.unMakeMove(board);
+            // move.setPreviousMove(null);
+            // turnColor = oldColor;
+            // lastMove = oldLast;
             throw e;
         }
     }
 
-    public void undoMove() {
+    public synchronized  void undoMove() {
         Move oldLast = lastMove;
         PieceColor oldColor = turnColor;
         try {
             lastMove.unMakeMove(board);
             lastMove = lastMove.getPreviousMove();
             switchTurnColor();
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             oldLast.makeMove(board);
             lastMove = oldLast;
             turnColor = oldColor;

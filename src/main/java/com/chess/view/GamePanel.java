@@ -1,12 +1,15 @@
 package com.chess.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 import com.chess.model.RenderState;
 
@@ -14,8 +17,6 @@ import com.chess.model.RenderState;
 public class GamePanel extends JPanel{
     private final BoardPanel boardPanel;
     private final ControlPanel controlPanel;
-    private final GameRightSidebarPanel rightSidebarPanel;
-
 
     private JPanel botProgressBar;
 
@@ -23,14 +24,11 @@ public class GamePanel extends JPanel{
         setLayout(new BorderLayout());
         boardPanel = new BoardPanel();
         controlPanel = new ControlPanel();
-        rightSidebarPanel = new GameRightSidebarPanel();
-        
-        add(rightSidebarPanel, BorderLayout.EAST);
+
         add(controlPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
         boardPanel.setBackground(new Color(150,75,0));
         boardPanel.setOpaque(true);
-        boardPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
         
     }
 
@@ -39,10 +37,22 @@ public class GamePanel extends JPanel{
 
 
 
-    public void initBotProgress() {
+    public JProgressBar initBotProgress() {
         botProgressBar = new JPanel();
-        
-        add(botProgressBar);
+        botProgressBar.setLayout(new GridLayout(1,1));
+        botProgressBar.setPreferredSize(new Dimension(0, 50));
+        JProgressBar bar = new JProgressBar(0, 100);
+        bar.setForeground(Color.RED);
+        bar.setBackground(Color.BLACK);
+        bar.setStringPainted(true);
+        bar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+        botProgressBar.add(bar );
+        add(botProgressBar, BorderLayout.SOUTH);
+        return bar;
+    }
+
+    public void removeProgress(){
+        if(botProgressBar != null)botProgressBar.setVisible(false);
     }
 
     public void mate(String color){
@@ -59,6 +69,7 @@ public class GamePanel extends JPanel{
     public void setBoardClickedListeners(BiConsumer<Integer, Integer> listener){
          boardPanel.setBoardClickedListeners(listener);
     }
+
     public void refresh(RenderState boardState){
         boardPanel.refresh(boardState);
     }

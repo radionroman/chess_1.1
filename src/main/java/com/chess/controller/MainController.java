@@ -1,6 +1,6 @@
 package com.chess.controller;
 
-import com.chess.player.BotPlayerMinimax;
+import com.chess.player.BotPlayerMinimaxSwingWorker;
 import com.chess.player.HumanPlayer;
 import com.chess.view.GamePanel;
 import com.chess.view.MainView;
@@ -17,11 +17,11 @@ public class MainController {
                 case "PVP" -> chessController = new ChessController(new HumanPlayer(), new HumanPlayer(),
                         mainView.getGamePanel());
                 case "PVEWhite" -> {
-                    chessController = new ChessController(new HumanPlayer(), new BotPlayerMinimax(3),
+                    chessController = new ChessController(new HumanPlayer(), new BotPlayerMinimaxSwingWorker(2),
                         mainView.getGamePanel());
                         }
 
-                case "PVEBlack" -> {chessController = new ChessController(new BotPlayerMinimax(3), new HumanPlayer(),
+                case "PVEBlack" -> {chessController = new ChessController(new BotPlayerMinimaxSwingWorker(2), new HumanPlayer(),
                         mainView.getGamePanel());
                     
                     }

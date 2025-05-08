@@ -11,7 +11,7 @@ import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class ChessModel {
     private final Stack<Move> moveHistory = new Stack<>();
-    private GameState gameState;
+    private final GameState gameState;
     private final boolean[][] isSelectableSquares = new boolean[BOARD_ROWS][BOARD_COLS];
     private Optional<Square> selectedSquare = Optional.empty();
 
@@ -48,6 +48,7 @@ public class ChessModel {
     }
 
     public void applyMove(Move move) {
+        
         gameState.makeMove(move);
         moveHistory.push(move);
     }
@@ -68,10 +69,9 @@ public class ChessModel {
         return gameState;
     }
 
-    public RenderState getRenderState(boolean allowClicks) {
-
-        return new RenderState(MoveValidator.getLegalMovesForColor(gameState), gameState.getBoard(),
-                moveHistory.empty() ? null : moveHistory.peek(), selectedSquare, allowClicks);
+    public RenderState getRenderState() {
+         return new RenderState(MoveValidator.getLegalMovesForColor(gameState), gameState.getBoard(),
+                moveHistory.empty() ? null : moveHistory.peek(), selectedSquare);
     }
 
     public Optional<Square> getSelectedSquare() {

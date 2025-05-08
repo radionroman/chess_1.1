@@ -1,19 +1,19 @@
 package com.chess.model;
 
-import static com.chess.utils.Constants.*;
-
 import java.util.List;
 import java.util.Optional;
 
 import com.chess.model.moves.Move;
+import static com.chess.utils.Constants.BOARD_COLS;
+import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class RenderState {
     private final boolean[][] squaresActive;
     private final String[][] board;
     private final int[][] lastMove;
 
-    public RenderState(List<Move> legalMoves, Board board, Move lastMove, Optional<Square> selectedSquare,
-            boolean allowClicks) {
+    public RenderState(List<Move> legalMoves, Board board, Move lastMove, Optional<Square> selectedSquare
+            ) {
 
         String[][] tempBoard = new String[8][8];
         for (int i = 0; i < tempBoard.length; i++) {
@@ -29,10 +29,7 @@ public class RenderState {
                 };
         boolean[][] tempSquaresActive = new boolean[BOARD_ROWS][BOARD_COLS];
         this.board = tempBoard;
-        if (!allowClicks) {
-            this.squaresActive = tempSquaresActive;
-            return;
-        }
+        
         if (!selectedSquare.isPresent()) {
             for (Move move : legalMoves) {
                 tempSquaresActive[move.getFrom().getRow()][move.getFrom().getCol()] = true;

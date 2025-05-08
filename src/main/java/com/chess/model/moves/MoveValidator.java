@@ -25,8 +25,9 @@ public class MoveValidator {
         // long end = System.nanoTime();
         // System.out.println(end - start);
         ArrayList<Move> legalMoves = new ArrayList<>();
-
+        
         for (Move move : pseudoLegalMoves) {
+            
             state.makeMove(move);
             if (!isSquareAttacked(color, state, null))
                 legalMoves.add(move);

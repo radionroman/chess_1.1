@@ -1,13 +1,14 @@
 package com.chess.controller;
 
+import javax.swing.JProgressBar;
+
 import com.chess.model.ChessModel;
 import com.chess.model.PieceColor;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveValidator;
 import com.chess.model.moves.PromotionMove;
 import com.chess.model.pieces.PieceType;
-import com.chess.player.BotPlayer;
-import com.chess.player.BotPlayerMinimax;
+import com.chess.player.BotPlayerMinimaxSwingWorker;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.GamePanel;
@@ -26,24 +27,9 @@ public class ChessController {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         setBotListener();
-        view.setBoardClickedListeners((row, col) -> {
-            handleClickBoard(row, col);
-        });
         view.setControlClickedListener((type) -> handleClickControl(type));
-        view.refresh(model.getRenderState(isClickable()));
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            if (whitePlayer instanceof BotPlayer) {
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(200); // allow UI to update
-                    } catch (InterruptedException ex) {
-                    }
-                    javax.swing.SwingUtilities.invokeLater(this::nextTurn);
-                }).start();
-            } else {
-                nextTurn(); // Immediate for human
-            }
-        });
+        view.refresh(model.getRenderState());
+        nextTurn();
     }
 
     private boolean isClickable() {
@@ -59,31 +45,18 @@ public class ChessController {
     private void nextTurn() {
 
         Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
+        if (current instanceof HumanPlayer)view.setBoardClickedListeners((row, col) -> {
+            handleClickBoard(row, col);
+        }); 
+        else view.setBoardClickedListeners((row, col) -> {System.out.println("disabled");});
         current.requestMove(model, (move) -> {
             model.applyMove(move);
-            if (current instanceof BotPlayer)
-                view.refresh(model.getRenderState(isClickable()));
-            else
-                view.refresh(model.getRenderState(isClickable()));
+            view.refresh(model.getRenderState());
             if (MoveValidator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
                 view.mate(model.getTurnColor().toString());
                 return;
             }
-            // Force repaint before the next logic runs
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                if (current instanceof BotPlayer) {
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(200); // allow UI to update
-                        } catch (InterruptedException ex) {
-                        }
-                        javax.swing.SwingUtilities.invokeLater(this::nextTurn);
-                    }).start();
-                } else {
-                    nextTurn(); // Immediate for human
-                }
-            });
-            // Immediately continue if it's human's turn
+            nextTurn();
         });
     }
 
@@ -93,11 +66,12 @@ public class ChessController {
     }
 
     private void handleClickBoard(int row, int col) {
-
-        boolean[][] isActiveSquares = model.getRenderState(true).getSquaresActive();
+        boolean[][] isActiveSquares = model.getRenderState().getSquaresActive();
         if (!isActiveSquares[row][col])
             return;
+        
         Move move = model.processBoardClicked(row, col);
+
 
         if (move != null && move instanceof PromotionMove) {
             view.showPromotionDialog(selectedType -> {
@@ -106,17 +80,16 @@ public class ChessController {
                     case "Rook" -> PieceType.ROOK;
                     case "Bishop" -> PieceType.BISHOP;
                     case "Knight" -> PieceType.KNIGHT;
-                    default -> PieceType.QUEEN; // fallback
+                    default -> PieceType.QUEEN; // fallbac k
                 };
                 Move promotedMove = new PromotionMove(move.getFrom(), move.getTo(), newType);
                 userMoved(promotedMove);
-                view.refresh(model.getRenderState(isClickable()));
+                view.refresh(model.getRenderState());
             });
         }
-
         else if (move != null)
             userMoved(move);
-        view.refresh(model.getRenderState(isClickable()));
+        view.refresh(model.getRenderState());
 
     }
 
@@ -133,23 +106,30 @@ public class ChessController {
 
             default -> throw new IllegalArgumentException("Unknown Control button type: " + type);
         }
-        view.refresh(model.getRenderState(isClickable()));
+        view.refresh(model.getRenderState());
 
     }
 
     private void setBotListener() {
-        BotPlayerMinimax botPlayer = null;
-        if (whitePlayer instanceof BotPlayerMinimax botPlayer1) {
+        BotPlayerMinimaxSwingWorker botPlayer = null;
+        if (whitePlayer instanceof BotPlayerMinimaxSwingWorker botPlayer1) {
             botPlayer = botPlayer1;
         }
-        else if (blackPlayer instanceof BotPlayerMinimax botPlayer1) {
+        else if (blackPlayer instanceof BotPlayerMinimaxSwingWorker botPlayer1) {
             botPlayer = botPlayer1;
         }
 
-        if (botPlayer != null) botPlayer.connectProgressBar((Integer moveNumber, Integer totalMoves) -> {
-            System.out.println(moveNumber + " " + totalMoves);
-        });
-
+        if (botPlayer != null) {
+            JProgressBar bar = view.initBotProgress();
+    
+            botPlayer.connectProgressBar((Integer percentage) -> {
+                System.out.println(percentage);
+                bar.setValue(percentage);
+            });
+        }
+        else {
+            view.removeProgress();
+        }
     }
 
 }
