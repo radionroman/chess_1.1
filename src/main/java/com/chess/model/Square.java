@@ -28,7 +28,7 @@ public class Square {
 
     @Override
     public String toString() {
-        return "(" + row + ", " + col + ")";
+        return Character.toString('a' + (8 - col))+ Integer.toString(8-row);
     }
 
     

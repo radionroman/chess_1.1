@@ -36,10 +36,9 @@ public abstract class Move {
         return previousMove;
     }
 
-    // TODO: make the method atomic
-    public abstract void makeMove(Board board);
+    public abstract void execute(Board board);
 
-    public abstract void unMakeMove(Board board);
+    public abstract void undo(Board board);
 
     public boolean isPreviousHasMoved() {
         return previousHasMoved;
@@ -89,8 +88,6 @@ public abstract class Move {
             if (other.previousMove != null)
                 return false;
         } else if (!previousMove.equals(other.previousMove))
-            return false;
-        if (previousHasMoved != other.previousHasMoved)
             return false;
         return true;
     }

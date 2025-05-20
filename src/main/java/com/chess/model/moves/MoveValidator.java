@@ -17,7 +17,8 @@ public class MoveValidator {
     }
 
 
-    public static List<Move> getLegalMovesForColor(GameState state) {
+    public static List<Move> getLegalMovesForColor(GameState gameState) {
+        GameState state = gameState.copy();
         // System.out.println(counter++);
         PieceColor color = state.getTurnColor();
         // long start = System.nanoTime();
@@ -27,8 +28,12 @@ public class MoveValidator {
         ArrayList<Move> legalMoves = new ArrayList<>();
         
         for (Move move : pseudoLegalMoves) {
+            try {
+                state.executeMove(move);
+            } catch (Exception e) {
+                
+            }
             
-            state.makeMove(move);
             if (!isSquareAttacked(color, state, null))
                 legalMoves.add(move);
 

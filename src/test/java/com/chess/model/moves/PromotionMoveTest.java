@@ -32,7 +32,7 @@ public class PromotionMoveTest {
     @EnumSource(value = PieceType.class, names = {"QUEEN", "ROOK", "BISHOP", "KNIGHT"}) 
     void testMakePromotion(PieceType promotionType) {
         var move = new PromotionMove(E7_SQUARE, E8_SQUARE, promotionType);
-        move.makeMove(board);
+        move.execute(board);
 
         assertNull(board.getPieceAt(E7_SQUARE), "Cool");
         assertEquals(promotionType, board.getPieceAt(E8_SQUARE).getPieceType());
@@ -44,8 +44,8 @@ public class PromotionMoveTest {
     @EnumSource(value = PieceType.class, names = {"QUEEN", "ROOK", "BISHOP", "KNIGHT"}) 
     void testUnMakePromotion(PieceType promotionType) {
         var move = new PromotionMove(E7_SQUARE, E8_SQUARE, promotionType);
-        move.makeMove(board);
-        move.unMakeMove(board);
+        move.execute(board);
+        move.undo(board);
 
         assertNull(board.getPieceAt(E8_SQUARE));
         assertEquals(whitePawn, board.getPieceAt(E7_SQUARE));

@@ -12,7 +12,7 @@ public class EnPassantMove extends Move{
     }
 
     @Override
-    public void makeMove(Board board) {
+    public void execute(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
         Piece piece = board.getPieceAt(from);
@@ -23,7 +23,7 @@ public class EnPassantMove extends Move{
         board.getPieceAt(to).setHasMoved();
     }
     @Override
-    public void unMakeMove(Board board) {
+    public void undo(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
         Piece piece = board.getPieceAt(to);

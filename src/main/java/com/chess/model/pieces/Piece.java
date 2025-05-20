@@ -51,6 +51,13 @@ public abstract class Piece {
     public PieceColor getPieceColor() {
         return color;
     }
+    public Piece copy() {
+        Piece clone = PieceFactory.createPiece(this.getPieceType(), this.getPieceColor());
+        if (this.hasMoved) {
+            clone.setHasMoved();
+        }
+        return clone;
+    }
 
     public abstract List<Move> getPseudoLegalMoves(GameState state, int row, int col);
 

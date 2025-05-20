@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import com.chess.model.RenderState;
+import com.chess.model.BoardSnapshot;
 
 
 public class GamePanel extends JPanel{
@@ -66,19 +66,19 @@ public class GamePanel extends JPanel{
 
 
 
-    public void setBoardClickedListeners(BiConsumer<Integer, Integer> listener){
-         boardPanel.setBoardClickedListeners(listener);
+    public void setSquareListener(BiConsumer<Integer, Integer> listener){
+         boardPanel.setSquareListener(listener);
     }
 
-    public void refresh(RenderState boardState){
+    public void refresh(BoardSnapshot boardState){
         boardPanel.refresh(boardState);
     }
     public void showPromotionDialog(Consumer<String> callback){
         boardPanel.showPromotionDialog(callback);
     }
 
-    public void setControlClickedListener(Consumer<String> listener){
-        controlPanel.setControlClickedListener(listener);
+    public void setControlListener(Consumer<String> listener){
+        controlPanel.setControlListener(listener);
     }
 
 

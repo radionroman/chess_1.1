@@ -41,7 +41,7 @@ public class BoardTest {
     @Test
     void testSetup() {
         Board board = new Board();
-        board.setUp("8/8/8/8/8/8/8/8");
+        board.setup("8/8/8/8/8/8/8/8");
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 System.err.println(board.getPieceAt(i, j));

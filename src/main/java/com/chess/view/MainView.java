@@ -22,6 +22,7 @@ public class MainView extends JFrame{
         mainPanel.add(gamePanel, Screens.GAMEBOARD.toString());
         add(mainPanel);
         pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
     

@@ -1,7 +1,5 @@
 package com.chess.model.pieces;
 
-import static com.chess.utils.Constants.BOARD_COLS;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +11,7 @@ import com.chess.model.moves.CastlingMove;
 import com.chess.model.moves.DefaultMove;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveValidator;
+import static com.chess.utils.Constants.BOARD_COLS;
 
 public class King extends Piece {
     private final int[][] moveDirections = new int[][] {
@@ -70,11 +69,11 @@ public class King extends Piece {
         int start, end;
 
         if (kingCol > rookCol) {
-            start = rookCol + 1;
+            start = kingCol - 2;
             end = kingCol;
         } else {
             start = kingCol;
-            end = rookCol - 1;
+            end = kingCol + 2;
         }
         for (int i = start; i <= end; i++) {
             if (MoveValidator.isSquareAttacked(color, state, new Square(kingSquare.getRow(), i))

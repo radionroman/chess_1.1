@@ -30,7 +30,7 @@ public class DefaultMoveTest {
     @Test
     void testMakeMove() {
         var move = new DefaultMove(E2_SQUARE, E3_SQUARE);
-        move.makeMove(board);
+        move.execute(board);
 
         assertTrue(whitePawn.hasMoved());
         assertNull(board.getPieceAt(E2_SQUARE));
@@ -41,8 +41,8 @@ public class DefaultMoveTest {
     @Test
     void testUnMakeMove() {
         var move = new DefaultMove(E2_SQUARE, E3_SQUARE);
-        move.makeMove(board);
-        move.unMakeMove(board);
+        move.execute(board);
+        move.undo(board);
 
         assertFalse(whitePawn.hasMoved());
         assertNull(board.getPieceAt(E3_SQUARE));
@@ -52,10 +52,10 @@ public class DefaultMoveTest {
     @Test
     void testUnMakeMoveHasMoved() {
         var move = new DefaultMove(E2_SQUARE, E3_SQUARE);
-        move.makeMove(board);
+        move.execute(board);
         move = new DefaultMove(E3_SQUARE, E4_SQUARE);
-        move.makeMove(board);
-        move.unMakeMove(board);
+        move.execute(board);
+        move.undo(board);
 
         assertTrue(whitePawn.hasMoved());
         assertNull(board.getPieceAt(E4_SQUARE));

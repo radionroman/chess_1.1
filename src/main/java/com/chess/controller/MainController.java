@@ -1,6 +1,7 @@
 package com.chess.controller;
 
-import com.chess.player.BotPlayerMinimaxSwingWorker;
+import com.chess.model.PieceColor;
+import com.chess.player.BotPlayerMinimax;
 import com.chess.player.HumanPlayer;
 import com.chess.view.GamePanel;
 import com.chess.view.MainView;
@@ -12,16 +13,16 @@ public class MainController {
 
     public MainController() {
         this.mainView = new MainView();
-        mainView.getMenuPanel().setUpListeners((type) -> {
+        mainView.getMenuPanel().setMenuListener((type) -> {
             switch (type) {
                 case "PVP" -> chessController = new ChessController(new HumanPlayer(), new HumanPlayer(),
                         mainView.getGamePanel());
                 case "PVEWhite" -> {
-                    chessController = new ChessController(new HumanPlayer(), new BotPlayerMinimaxSwingWorker(2),
+                    chessController = new ChessController(new HumanPlayer(), new BotPlayerMinimax(2, PieceColor.BLACK),
                         mainView.getGamePanel());
                         }
 
-                case "PVEBlack" -> {chessController = new ChessController(new BotPlayerMinimaxSwingWorker(2), new HumanPlayer(),
+                case "PVEBlack" -> {chessController = new ChessController(new BotPlayerMinimax(3,PieceColor.WHITE), new BotPlayerMinimax(2, PieceColor.BLACK),
                         mainView.getGamePanel());
                     
                     }

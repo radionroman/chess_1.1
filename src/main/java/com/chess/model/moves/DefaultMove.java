@@ -13,10 +13,14 @@ public class DefaultMove extends Move {
    
 
     @Override
-    public void makeMove(Board board) {
+    public void execute(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
         Piece piece = board.getPieceAt(from);
+        if (piece == null){ 
+            System.out.println("Trying to move a piece that is null!" + this);
+            return;
+        }
         captured = board.getPieceAt(to);
         board.setPieceAt(to, piece);
         board.setPieceAt(from, null);
@@ -24,15 +28,27 @@ public class DefaultMove extends Move {
         board.getPieceAt(to).setHasMoved();
     }
 
+// DefaultMove.java
     @Override
-    public void unMakeMove(Board board) {
-        Square from = this.getFrom();
-        Square to = this.getTo();
-        Piece piece = board.getPieceAt(to);
+    public void undo(Board board) {
+        Square from = getFrom();
+        Square to   = getTo();
+
+        Piece moved = board.getPieceAt(to);
+        // if there's no piece here **and** nothing was captured, this move was never applied
+        if (moved == null && captured == null) {
+            return;
+        }
+
+        // restore whatever was on `to` (might be null)
         board.setPieceAt(to, captured);
-        board.setPieceAt(from, piece);
-        if (!isPreviousHasMoved())
-            board.getPieceAt(from).setHasNotMoved();
+        // put the moved piece back on `from`
+        board.setPieceAt(from, moved);
+
+        // if it hadn’t moved before, clear its moved-flag
+        if (moved != null && !isPreviousHasMoved()) {
+            moved.setHasNotMoved();
+        }
     }
 
 }

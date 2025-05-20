@@ -9,10 +9,8 @@ public class App
     {
         javax.swing.SwingUtilities.invokeLater(() -> {
             MainController mainController = new MainController();
-            // ChessModel model = new ChessModel();
-            // ChessView view = new ChessView();
-            // new ChessController(model, view);
         });
 
     }
 }
+

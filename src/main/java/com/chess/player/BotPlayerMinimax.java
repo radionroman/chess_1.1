@@ -1,8 +1,9 @@
 package com.chess.player;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import javax.swing.SwingWorker;
 
 import com.chess.model.Board;
 import com.chess.model.ChessModel;
@@ -88,13 +89,15 @@ public class BotPlayerMinimax extends Player {
     };
 
     private final int depthF;
-    private BiConsumer<Integer, Integer> progressBar;
+    private Consumer<Integer> progressBar;
+    private final PieceColor myColor;
 
-    public BotPlayerMinimax(int depth) {
+    public BotPlayerMinimax(int depth, PieceColor myColor) {
         this.depthF = depth;
+        this.myColor = myColor;
     }
 
-    public void connectProgressBar(BiConsumer<Integer, Integer> l){
+    public void connectProgressBar(Consumer<Integer> l){
         progressBar = l;
     }
 
@@ -161,7 +164,7 @@ public class BotPlayerMinimax extends Player {
             for (Move move : legalMoves) {
                 // System.out.println(move);
 
-                child.makeMove(move);
+                child.executeMove(move);
 
                 int eval = minimax(child, depth - 1, false); // switch to minimizing
                 maxEval = Math.max(maxEval, eval);
@@ -171,7 +174,7 @@ public class BotPlayerMinimax extends Player {
         } else {
             int minEval = Integer.MAX_VALUE;
             for (Move move : legalMoves) {
-                child.makeMove(move);
+                child.executeMove(move);
                 int eval = minimax(child, depth - 1, true); // switch to maximizing
                 minEval = Math.min(minEval, eval);
                 child.undoMove();
@@ -182,37 +185,59 @@ public class BotPlayerMinimax extends Player {
 
     @Override
     public void requestMove(ChessModel model, Consumer<Move> callback) {
-        GameState gameState = model.getGameState();
-        List<Move> legalMoves = MoveValidator.getLegalMovesForColor(gameState);
-        PieceColor turnColor = gameState.getTurnColor();
-        Move bestMove = null;
-        int bestValue = (turnColor == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        GameState child = gameState;
-        int totalMoves = legalMoves.size();
-        int moveNumber = 0;
-        progressBar.accept(moveNumber, totalMoves);
-        for (Move move : legalMoves) {
-            child.makeMove(move);
-            int value = minimax(child, depthF, turnColor == PieceColor.BLACK); // depth 3 is good for
-                                                                                              // start
+        
+        SwingWorker<Void, Integer> worker = new SwingWorker<Void,Integer>() {
 
-            if (turnColor == PieceColor.WHITE && value > bestValue) {
-                bestValue = value;
-                bestMove = move;
-            } else if (turnColor == PieceColor.BLACK && value < bestValue) {
-                bestValue = value;
-                bestMove = move;
+            @Override
+            protected Void doInBackground() throws Exception {
+                GameState gameState = model.getGameState().copy();
+                List<Move> legalMoves = MoveValidator.getLegalMovesForColor(gameState);
+                PieceColor turnColor = gameState.getTurnColor();
+                if (turnColor != myColor) {
+                    System.out.println("Wrong color");
+                    throw new RuntimeException("The turn color is wrong!");
+                }
+                Move bestMove = null;
+                int bestValue = (turnColor == PieceColor.WHITE) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+                GameState child = gameState;
+                int totalMoves = legalMoves.size();
+                int moveNumber = 0;
+                publish(0);
+                for (Move move : legalMoves) {
+                    child.executeMove(move);
+                    int value = minimax(child, depthF, turnColor == PieceColor.BLACK); // depth 3 is good for
+                                                                                                      // start
+        
+                    if (turnColor == PieceColor.WHITE && value > bestValue) {
+                        bestValue = value;
+                        bestMove = move;
+                    } else if (turnColor == PieceColor.BLACK && value < bestValue) {
+                        bestValue = value;
+                        bestMove = move;
+                    }
+                    child.undoMove();
+                    moveNumber++;
+                    publish(Math.floorDiv(moveNumber*100, totalMoves));
+                }
+        
+                if (bestMove == null && !legalMoves.isEmpty()) {
+                    bestMove = legalMoves.get(0); // fallback
+                }
+        
+                callback.accept(bestMove);
+                return null;
             }
-            child.undoMove();
-            moveNumber++;
-            progressBar.accept(moveNumber, totalMoves);
-        }
 
-        if (bestMove == null && !legalMoves.isEmpty()) {
-            bestMove = legalMoves.get(0); // fallback
-        }
-
-        callback.accept(bestMove);
+            @Override
+            protected void process(List<Integer> chunks) {
+                progressBar.accept(chunks.get(chunks.size()-1));
+                
+            }
+            
+            
+        };
+        worker.execute();
+        
         
     }
 

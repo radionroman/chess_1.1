@@ -8,7 +8,7 @@ import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveValidator;
 import com.chess.model.moves.PromotionMove;
 import com.chess.model.pieces.PieceType;
-import com.chess.player.BotPlayerMinimaxSwingWorker;
+import com.chess.player.BotPlayerMinimax;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.GamePanel;
@@ -20,38 +20,28 @@ public class ChessController {
     private final ChessModel model;
     private final Player whitePlayer;
     private final Player blackPlayer;
+    // private final GameService gameService;
 
     public ChessController(Player whitePlayer, Player blackPlayer, GamePanel view) {
         this.model = new ChessModel();
         this.view = view;
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
-        setBotListener();
-        view.setControlClickedListener((type) -> handleClickControl(type));
-        view.refresh(model.getRenderState());
+        
+
+        connectBotProgressBar();
+        view.setControlListener(this::onControlClicked);
+        view.refresh(model.getBoardSnapshot());
         nextTurn();
     }
 
-    private boolean isClickable() {
-        PieceColor turnColor = model.getTurnColor();
-        Player current;
-        if (turnColor == PieceColor.WHITE)
-            current = whitePlayer;
-        else
-            current = blackPlayer;
-        return current instanceof HumanPlayer;
-    }
-
     private void nextTurn() {
-
         Player current = model.getTurnColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
-        if (current instanceof HumanPlayer)view.setBoardClickedListeners((row, col) -> {
-            handleClickBoard(row, col);
-        }); 
-        else view.setBoardClickedListeners((row, col) -> {System.out.println("disabled");});
-        current.requestMove(model, (move) -> {
-            model.applyMove(move);
-            view.refresh(model.getRenderState());
+        if (current instanceof HumanPlayer)view.setSquareListener(this::onSquareClicked); 
+        else view.setSquareListener((row, col) -> {System.out.println("disabled");});
+        if (current != null) current.requestMove(model, (move) -> {
+            model.executeMove(move);
+            view.refresh(model.getBoardSnapshot());
             if (MoveValidator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
                 view.mate(model.getTurnColor().toString());
                 return;
@@ -60,17 +50,17 @@ public class ChessController {
         });
     }
 
-    public void userMoved(Move move) {
+    public void humanPlayerApplyMove(Move move) {
         Player current = model.getTurnColor() == PieceColor.BLACK ? blackPlayer : whitePlayer;
         current.onUserMove(move);
     }
 
-    private void handleClickBoard(int row, int col) {
-        boolean[][] isActiveSquares = model.getRenderState().getSquaresActive();
+    private void onSquareClicked(int row, int col) {
+        boolean[][] isActiveSquares = model.getBoardSnapshot().getSquaresActive();
         if (!isActiveSquares[row][col])
             return;
         
-        Move move = model.processBoardClicked(row, col);
+        Move move = model.onSquareClicked(row, col);
 
 
         if (move != null && move instanceof PromotionMove) {
@@ -83,22 +73,21 @@ public class ChessController {
                     default -> PieceType.QUEEN; // fallbac k
                 };
                 Move promotedMove = new PromotionMove(move.getFrom(), move.getTo(), newType);
-                userMoved(promotedMove);
-                view.refresh(model.getRenderState());
+                humanPlayerApplyMove(promotedMove);
+                view.refresh(model.getBoardSnapshot());
             });
         }
         else if (move != null)
-            userMoved(move);
-        view.refresh(model.getRenderState());
+            humanPlayerApplyMove(move);
+        view.refresh(model.getBoardSnapshot());
 
     }
 
-    private void handleClickControl(String type) {
-
+    private void onControlClicked(String type) {
         switch (type) {
             case "Undo" -> {
-                model.undo();
-                model.undo();
+                model.undoMove();
+                model.undoMove();
             }
             case "Menu" -> {
                 ScreenManager.showScreen(Screens.MENU);
@@ -106,16 +95,16 @@ public class ChessController {
 
             default -> throw new IllegalArgumentException("Unknown Control button type: " + type);
         }
-        view.refresh(model.getRenderState());
+        view.refresh(model.getBoardSnapshot());
 
     }
 
-    private void setBotListener() {
-        BotPlayerMinimaxSwingWorker botPlayer = null;
-        if (whitePlayer instanceof BotPlayerMinimaxSwingWorker botPlayer1) {
+    private void connectBotProgressBar() {
+        BotPlayerMinimax botPlayer = null;
+        if (whitePlayer instanceof BotPlayerMinimax botPlayer1) {
             botPlayer = botPlayer1;
         }
-        else if (blackPlayer instanceof BotPlayerMinimaxSwingWorker botPlayer1) {
+        else if (blackPlayer instanceof BotPlayerMinimax botPlayer1) {
             botPlayer = botPlayer1;
         }
 

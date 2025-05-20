@@ -15,7 +15,7 @@ public class PromotionMove extends Move{
         this.promoteTo = promoteTo;
     }
     @Override
-    public void makeMove(Board board) {
+    public void execute(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
         captured = board.getPieceAt(to);
@@ -26,7 +26,7 @@ public class PromotionMove extends Move{
             
     }
     @Override
-    public void unMakeMove(Board board) {
+    public void undo(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
         board.setPieceAt(to, captured);

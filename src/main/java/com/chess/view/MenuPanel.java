@@ -17,6 +17,7 @@ public class MenuPanel extends JPanel{
         PVPButton = Style.MenuButton.create("PVP");
         PVEWhiteButton = Style.MenuButton.create("PVE White");
         PVEBlackButton = Style.MenuButton.create("PVE Black");
+
         setBackground(new Color(150,75,0));
         setOpaque(true);
         // Add vertical glue to center buttons vertically
@@ -41,7 +42,7 @@ public class MenuPanel extends JPanel{
     }
 
 
-    public void setUpListeners(Consumer<String> callback) {
+    public void setMenuListener(Consumer<String> callback) {
         PVPButton.addActionListener(e -> {
                 callback.accept("PVP");
                 ScreenManager.showScreen(Screens.GAMEBOARD);

@@ -13,39 +13,40 @@ public class CastlingMove extends Move {
     }
 
     @Override
-    public void makeMove(Board board) {
+    public void execute(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
         Piece piece = board.getPieceAt(from);
         board.setPieceAt(to, piece);
         board.setPieceAt(from, null);
+        System.out.println(from + " " + to);
         if (isLong) {
-            board.setPieceAt(from.getRow(), 2, board.getPieceAt(from.getRow(), 0));
+            board.setPieceAt(from.getRow(), from.getCol()-1, board.getPieceAt(from.getRow(), 0));
             board.setPieceAt(from.getRow(), 0, null);
-            board.getPieceAt(from.getRow(), 2).setHasMoved();
+            board.getPieceAt(from.getRow(), from.getCol()-1).setHasMoved();
         } else {
-            board.setPieceAt(from.getRow(), 5, board.getPieceAt(from.getRow(), 7));
+            board.setPieceAt(from.getRow(), from.getCol()+1, board.getPieceAt(from.getRow(), 7));
             board.setPieceAt(from.getRow(), 7, null);
-            board.getPieceAt(from.getRow(), 5).setHasMoved();
+            board.getPieceAt(from.getRow(), from.getCol()+1).setHasMoved();
         }
 
         board.getPieceAt(to).setHasMoved();
     }
 
     @Override
-    public void unMakeMove(Board board) {
+    public void undo(Board board) {
         Square from = this.getFrom();
         Square to = this.getTo();
-        board.setPieceAt(from.getRow(), 4, board.getPieceAt(to));
+        board.setPieceAt(from.getRow(), from.getCol(), board.getPieceAt(to));
         board.setPieceAt(to, null);
         if (isLong) {
-            board.setPieceAt(from.getRow(), 0, board.getPieceAt(from.getRow(), 2));
-            board.setPieceAt(from.getRow(), 2, null);
+            board.setPieceAt(from.getRow(), 0, board.getPieceAt(from.getRow(), from.getCol()-1));
+            board.setPieceAt(from.getRow(), from.getCol()-1, null);
             board.getPieceAt(from.getRow(), 0).setHasNotMoved();
 
         } else {
-            board.setPieceAt(from.getRow(), 7, board.getPieceAt(from.getRow(), 5));
-            board.setPieceAt(from.getRow(), 5, null);
+            board.setPieceAt(from.getRow(), 7, board.getPieceAt(from.getRow(), from.getCol()+1));
+            board.setPieceAt(from.getRow(), from.getCol()+1, null);
             board.getPieceAt(from.getRow(), 7).setHasNotMoved();
         }
         board.getPieceAt(from).setHasNotMoved();

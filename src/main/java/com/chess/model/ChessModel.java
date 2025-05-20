@@ -5,12 +5,13 @@ import java.util.Optional;
 import java.util.Stack;
 
 import com.chess.model.moves.Move;
+import com.chess.model.moves.MoveLogger;
 import com.chess.model.moves.MoveValidator;
 import static com.chess.utils.Constants.BOARD_COLS;
 import static com.chess.utils.Constants.BOARD_ROWS;
 
 public class ChessModel {
-    private final Stack<Move> moveHistory = new Stack<>();
+    private final Stack<Move> moveStack = new Stack<>();
     private final GameState gameState;
     private final boolean[][] isSelectableSquares = new boolean[BOARD_ROWS][BOARD_COLS];
     private Optional<Square> selectedSquare = Optional.empty();
@@ -20,7 +21,7 @@ public class ChessModel {
 
     }
 
-    public Move processBoardClicked(int row, int col) {
+    public Move onSquareClicked(int row, int col) {
         Square clickedSquare = new Square(row, col);
         Move move = null;
         List<Move> moves;
@@ -47,17 +48,18 @@ public class ChessModel {
 
     }
 
-    public void applyMove(Move move) {
-        
-        gameState.makeMove(move);
-        moveHistory.push(move);
+    public void executeMove(Move move) {
+        MoveLogger.log(getTurnColor() + " moved: " +  move);
+        gameState.executeMove(move);
+        moveStack.push(move);
+
     }
 
-    public void undo() {
+    public void undoMove() {
         Move previousMove;
-        if (moveHistory.empty())
+        if (moveStack.empty())
             return;
-        previousMove = moveHistory.pop();
+        previousMove = moveStack.pop();
         System.out.println("Undoing: " + previousMove);
         gameState.undoMove();
         clearSelectedSquare();
@@ -69,9 +71,9 @@ public class ChessModel {
         return gameState;
     }
 
-    public RenderState getRenderState() {
-         return new RenderState(MoveValidator.getLegalMovesForColor(gameState), gameState.getBoard(),
-                moveHistory.empty() ? null : moveHistory.peek(), selectedSquare);
+    public BoardSnapshot getBoardSnapshot() {
+         return new BoardSnapshot(MoveValidator.getLegalMovesForColor(gameState), gameState.getBoard(),
+                moveStack.empty() ? null : moveStack.peek(), selectedSquare);
     }
 
     public Optional<Square> getSelectedSquare() {

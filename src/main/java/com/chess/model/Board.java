@@ -48,7 +48,18 @@ public class Board {
         return board[square.getRow()][square.getCol()] == null;
     }
 
-    public void setUp(String FENString) {
+    public Board copy() {
+        Board b2 = new Board();
+        for (int r = 0; r < BOARD_ROWS; r++) {
+        for (int c = 0; c < BOARD_COLS; c++) {
+            Piece p = this.getPieceAt(r,c);
+            if (p != null) b2.setPieceAt(r,c, p.copy()); 
+        }
+        }
+        return b2;
+    }
+
+    public void setup(String FENString) {
         int row = 0;
         int col = 0;
         for (char c : FENString.toCharArray()) {
@@ -83,7 +94,5 @@ public class Board {
             }
         }
     }
-
-    // Game rules
 
 }
