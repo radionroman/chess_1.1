@@ -11,4 +11,8 @@ public abstract class Player {
     public void onUserMove(Move move) {
         throw new IllegalAccessError("Only Humans can do this");
     }
+
+    public void cancel() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import com.chess.model.BoardSnapshot;
 import static com.chess.utils.Constants.BOARD_COLS;
@@ -31,12 +30,7 @@ public class BoardPanel extends JPanel {
         for (int i = 0; i < BOARD_ROWS; i++) {
             for (int j = 0; j < BOARD_COLS; j++) {
                 JButton button = new JButton();
-                button.setFocusPainted(false);
-                button.setFont(StyleSettings.get(StyleSettings.Key.PIECE_FONT));
-                button.setEnabled(false);
-                button.setForeground(Color.BLACK);
-                button.setOpaque(true);
-
+                StyleSettings.applyBoardButtonStyle(button);
                 squares[i][j] = button;
                 boardPanel.add(button);
             }
@@ -58,7 +52,8 @@ public class BoardPanel extends JPanel {
         StyleSettings.addChangeListener((PropertyChangeEvent evt) -> {
             // only care about square-color changes or font changes
             switch (evt.getPropertyName()) {
-                case "EVEN_SQUARE", "ODD_SQUARE", "EVEN_HIGHLIGHT", "ODD_HIGHLIGHT", "PIECE_FONT" -> repaint();
+                case "BOARD_BG" -> setBackground(StyleSettings.get(StyleSettings.BoardStyle.BOARD_BG));
+                case "EVEN_SQUARE", "ODD_SQUARE", "EVEN_HIGHLIGHT", "ODD_HIGHLIGHT", "PIECE_FONT", "PIECE_COLOR" -> repaint();
             }
         });
     }
@@ -105,23 +100,21 @@ public class BoardPanel extends JPanel {
             for (int j = 0; j < BOARD_COLS; j++) {
                 JButton btn = squares[i][j];
                 btn.setText(board[i][j]);
-                btn.setEnabled(true);
+                btn.setForeground( StyleSettings.get(StyleSettings.BoardStyle.PIECE_COLOR) );
                 btn.setBorder(BorderFactory.createEmptyBorder());
-                // piece font may have changed
-                btn.setFont(StyleSettings.get(StyleSettings.Key.PIECE_FONT));
 
                 boolean isEven = ((i + j) % 2 == 0);
                 if (active[i][j]) {
                     // highlight
                     Color highlight = isEven
-                        ? StyleSettings.get(StyleSettings.Key.EVEN_HIGHLIGHT)
-                        : StyleSettings.get(StyleSettings.Key.ODD_HIGHLIGHT);
+                        ? StyleSettings.get(StyleSettings.BoardStyle.EVEN_HIGHLIGHT)
+                        : StyleSettings.get(StyleSettings.BoardStyle.ODD_HIGHLIGHT);
                     btn.setBackground(highlight);
                 } else {
                     // normal square
                     Color sq = isEven
-                        ? StyleSettings.get(StyleSettings.Key.EVEN_SQUARE)
-                        : StyleSettings.get(StyleSettings.Key.ODD_SQUARE);
+                        ? StyleSettings.get(StyleSettings.BoardStyle.EVEN_SQUARE)
+                        : StyleSettings.get(StyleSettings.BoardStyle.ODD_SQUARE);
                     btn.setBackground(sq);
                 }
             }
@@ -130,9 +123,9 @@ public class BoardPanel extends JPanel {
         // draw last-move borders
         if (lastMove != null) {
             squares[lastMove[0][0]][lastMove[0][1]]
-                .setBorder(new LineBorder(Color.RED, 4));
+                .setBorder(StyleSettings.get(StyleSettings.BoardStyle.LAST_MOVE_BORDER));
             squares[lastMove[1][0]][lastMove[1][1]]
-                .setBorder(new LineBorder(Color.RED, 4));
+                .setBorder(StyleSettings.get(StyleSettings.BoardStyle.LAST_MOVE_BORDER));
         }
     }
 

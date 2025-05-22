@@ -14,6 +14,7 @@ import com.chess.player.Player;
 import com.chess.view.GamePanel;
 import com.chess.view.ScreenManager;
 import com.chess.view.Screens;
+import com.chess.view.StyleSettings;
 
 public class ChessController {
     private final GamePanel view;
@@ -90,11 +91,17 @@ public class ChessController {
                 model.undoMove();
             }
             case "Menu" -> {
+                if (whitePlayer instanceof BotPlayerMinimax) whitePlayer.cancel();
+                if (blackPlayer instanceof BotPlayerMinimax) blackPlayer.cancel();
                 ScreenManager.showScreen(Screens.MENU);
+            }
+            case "ToggleStyle" -> {
+                StyleSettings.togglePreset();
             }
 
             default -> throw new IllegalArgumentException("Unknown Control button type: " + type);
         }
+        
         view.refresh(model.getBoardSnapshot());
 
     }

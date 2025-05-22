@@ -1,12 +1,8 @@
 package com.chess.view;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -17,43 +13,36 @@ import com.chess.model.BoardSnapshot;
 public class GamePanel extends JPanel{
     private final BoardPanel boardPanel;
     private final ControlPanel controlPanel;
+    private final BotProgressPanel botProgressPanel;
+    private final MoveHistoryPanel moveHistoryPanel;
 
-    private JPanel botProgressBar;
 
     public GamePanel() {
         setLayout(new BorderLayout());
+
         boardPanel = new BoardPanel();
         controlPanel = new ControlPanel();
+        botProgressPanel = new BotProgressPanel();
+        moveHistoryPanel = new MoveHistoryPanel();
 
         add(controlPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
-        boardPanel.setBackground(new Color(150,75,0));
-        boardPanel.setOpaque(true);
+        add(botProgressPanel, BorderLayout.SOUTH);
+        add(moveHistoryPanel, BorderLayout.EAST);
         
+
+
     }
 
 
-
-
-
-
-    public JProgressBar initBotProgress() {
-        botProgressBar = new JPanel();
-        botProgressBar.setLayout(new GridLayout(1,1));
-        botProgressBar.setPreferredSize(new Dimension(0, 50));
-        JProgressBar bar = new JProgressBar(0, 100);
-        bar.setForeground(Color.RED);
-        bar.setBackground(Color.BLACK);
-        bar.setStringPainted(true);
-        bar.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
-        botProgressBar.add(bar );
-        add(botProgressBar, BorderLayout.SOUTH);
-        return bar;
-    }
 
     public void removeProgress(){
-        if(botProgressBar != null)botProgressBar.setVisible(false);
+        if(botProgressPanel != null)botProgressPanel.remove();
     }
+
+
+
+
 
     public void mate(String color){
         JLabel label = new JLabel();
@@ -63,7 +52,9 @@ public class GamePanel extends JPanel{
         controlPanel.add(label);
     }
 
-
+    public JProgressBar initBotProgress(){
+        return botProgressPanel.initBotProgress();
+    }
 
 
     public void setSquareListener(BiConsumer<Integer, Integer> listener){

@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 public class ControlPanel extends JPanel {
     private final JButton undoButton;
     private final JButton menuButton;
+    private final JButton styleToggleButton;
 
     public ControlPanel() {
         setLayout(new GridBagLayout());
@@ -21,8 +22,10 @@ public class ControlPanel extends JPanel {
         // Create buttons and apply the centralized style
         menuButton = new JButton("Menu");
         undoButton = new JButton("Undo");
+        styleToggleButton = new JButton("ToggleStyle");
         StyleSettings.applyControlButtonStyle(menuButton);
         StyleSettings.applyControlButtonStyle(undoButton);
+        StyleSettings.applyControlButtonStyle(styleToggleButton);
 
         // Place them
         gbc.gridx = 0;
@@ -32,18 +35,22 @@ public class ControlPanel extends JPanel {
 
         gbc.gridx = 3;
         add(undoButton, gbc);
+        gbc.gridx = 6;
+        add(styleToggleButton, gbc);
 
         setPreferredSize(new Dimension(800, 70));
-        setBackground(StyleSettings.get(StyleSettings.Key.CONTROL_BG));
+        setBackground(StyleSettings.get(StyleSettings.BUTTON_FONT.BG));
 
         // Listen for style changes and re‐apply as needed
         StyleSettings.addChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
-                case "CONTROL_BG" -> setBackground(StyleSettings.get(StyleSettings.Key.CONTROL_BG));
+                case "CONTROL_BG" -> setBackground(StyleSettings.get(StyleSettings.BUTTON_FONT.BG));
                 case "CONTROL_FONT", "CONTROL_FG", "CONTROL_BUTTON_BG" -> {
                     StyleSettings.applyControlButtonStyle(menuButton);
                     StyleSettings.applyControlButtonStyle(undoButton);
+                    StyleSettings.applyControlButtonStyle(styleToggleButton);
                 }
+
             }
             repaint();
         });

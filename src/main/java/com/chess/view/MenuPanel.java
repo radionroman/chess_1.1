@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
 import java.util.function.Consumer;
 
 import javax.swing.Box;
@@ -30,13 +31,25 @@ public class MenuPanel extends JPanel{
             button.setAlignmentX(Component.CENTER_ALIGNMENT);
             button.setFont(new Font("SansSerif", Font.BOLD, 32));
             button.setFocusable(false);
+            StyleSettings.applyControlButtonStyle(button);
             add(button);
             add(Box.createVerticalStrut(20)); // spacing between buttons
         }
 
         // Add vertical glue again to push content to center
         add(Box.createVerticalGlue());
+        StyleSettings.addChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case "BOARD_BG" -> setBackground(StyleSettings.get(StyleSettings.BoardStyle.BOARD_BG));
+                case "CONTROL_FONT", "CONTROL_FG", "CONTROL_BUTTON_BG" -> {
+                    StyleSettings.applyControlButtonStyle(PVPButton);
+                    StyleSettings.applyControlButtonStyle(PVEWhiteButton);
+                    StyleSettings.applyControlButtonStyle(PVEBlackButton);
+                }
 
+            }
+            repaint();
+        });
         revalidate();
         repaint();
     }

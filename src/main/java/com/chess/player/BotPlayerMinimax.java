@@ -154,7 +154,9 @@ public class BotPlayerMinimax extends Player {
     }
 
     private int minimax(GameState child, int depth, boolean maximizingPlayer) {
+        if (worker.isCancelled())return 0;
         List<Move> legalMoves = MoveValidator.getLegalMovesForColor(child);
+
         if (depth == 0 || legalMoves.isEmpty()) {
             return evaluate(child);
         }
@@ -184,9 +186,16 @@ public class BotPlayerMinimax extends Player {
     }
 
     @Override
+    public void cancel() {
+        System.out.println("Canceled");
+        if(worker != null)worker.cancel(true);
+        
+    }
+    private SwingWorker<Void, Integer> worker;
+    @Override
     public void requestMove(ChessModel model, Consumer<Move> callback) {
         
-        SwingWorker<Void, Integer> worker = new SwingWorker<Void,Integer>() {
+        worker = new SwingWorker<Void,Integer>() {
 
             @Override
             protected Void doInBackground() throws Exception {
@@ -204,6 +213,7 @@ public class BotPlayerMinimax extends Player {
                 int moveNumber = 0;
                 publish(0);
                 for (Move move : legalMoves) {
+                    if(isCancelled()) return null;
                     child.executeMove(move);
                     int value = minimax(child, depthF, turnColor == PieceColor.BLACK); // depth 3 is good for
                                                                                                       // start
@@ -223,7 +233,6 @@ public class BotPlayerMinimax extends Player {
                 if (bestMove == null && !legalMoves.isEmpty()) {
                     bestMove = legalMoves.get(0); // fallback
                 }
-        
                 callback.accept(bestMove);
                 return null;
             }
