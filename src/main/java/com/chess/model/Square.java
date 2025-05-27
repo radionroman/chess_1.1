@@ -31,6 +31,10 @@ public class Square {
         return Character.toString('a' + (8 - col))+ Integer.toString(8-row);
     }
 
+    public boolean isEven() {
+        return (row + col) % 2 == 0;
+    }
+
     
 
 }

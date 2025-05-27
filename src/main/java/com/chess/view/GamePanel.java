@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -24,7 +25,7 @@ public class GamePanel extends JPanel{
         controlPanel = new ControlPanel();
         botProgressPanel = new BotProgressPanel();
         moveHistoryPanel = new MoveHistoryPanel();
-
+        
         add(controlPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
         add(botProgressPanel, BorderLayout.SOUTH);
@@ -72,5 +73,12 @@ public class GamePanel extends JPanel{
         controlPanel.setControlListener(listener);
     }
 
+    public JButton[][] getSquareButtons() {
+        return boardPanel.getSquareButtons();
+    }
+    public void addMoveToHistory(MoveHistoryEntryComponent mhec) {
+        moveHistoryPanel.addMoveToHistory(mhec);
+        
+    }
 
 }

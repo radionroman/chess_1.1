@@ -39,13 +39,13 @@ public class ControlPanel extends JPanel {
         add(styleToggleButton, gbc);
 
         setPreferredSize(new Dimension(800, 70));
-        setBackground(StyleSettings.get(StyleSettings.BUTTON_FONT.BG));
+        setBackground(StyleSettings.get(StyleSettings.ControlStyle.BG));
 
         // Listen for style changes and re‐apply as needed
         StyleSettings.addChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
-                case "CONTROL_BG" -> setBackground(StyleSettings.get(StyleSettings.BUTTON_FONT.BG));
-                case "CONTROL_FONT", "CONTROL_FG", "CONTROL_BUTTON_BG" -> {
+                case "BG" -> setBackground(StyleSettings.get(StyleSettings.ControlStyle.BG));
+                case "BUTTON_FONT", "BUTTON_TEXT_COLOR", "BUTTON_BG" -> {
                     StyleSettings.applyControlButtonStyle(menuButton);
                     StyleSettings.applyControlButtonStyle(undoButton);
                     StyleSettings.applyControlButtonStyle(styleToggleButton);

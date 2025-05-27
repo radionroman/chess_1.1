@@ -25,7 +25,7 @@ public class BoardPanel extends JPanel {
     public BoardPanel() {
         boardPanel = new JPanel(new GridLayout(BOARD_ROWS, BOARD_COLS));
         boardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        setBackground(StyleSettings.get(StyleSettings.BoardStyle.BOARD_BG));
         // build buttons
         for (int i = 0; i < BOARD_ROWS; i++) {
             for (int j = 0; j < BOARD_COLS; j++) {
@@ -88,6 +88,10 @@ public class BoardPanel extends JPanel {
         if (choice != null) {
             callback.accept(choice);
         }
+    }
+
+    public JButton[][] getSquareButtons() {
+        return squares;
     }
 
     /** Update all piece texts and square colors. */

@@ -41,7 +41,7 @@ public class MenuPanel extends JPanel{
         StyleSettings.addChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
                 case "BOARD_BG" -> setBackground(StyleSettings.get(StyleSettings.BoardStyle.BOARD_BG));
-                case "CONTROL_FONT", "CONTROL_FG", "CONTROL_BUTTON_BG" -> {
+                case "BUTTON_FONT", "BUTTON_TEXT_COLOR", "BUTTON_BG"  -> {
                     StyleSettings.applyControlButtonStyle(PVPButton);
                     StyleSettings.applyControlButtonStyle(PVEWhiteButton);
                     StyleSettings.applyControlButtonStyle(PVEBlackButton);

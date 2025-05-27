@@ -26,7 +26,7 @@ public class StyleSettings {
         BOARD_BG
     }
 
-    public enum BUTTON_FONT {
+    public enum ControlStyle {
         BG,
         BUTTON_FONT,
         BUTTON_TEXT_COLOR,
@@ -65,10 +65,10 @@ public class StyleSettings {
             preset.put(BoardStyle.PIECE_COLOR, new Color(0x10, 0x10, 0x10));
             preset.put(BoardStyle.BOARD_BG, new Color(0x80, 0x50, 0x20));
 
-            preset.put(BUTTON_FONT.BG, new Color(0x20, 0x20, 0x20));
-            preset.put(BUTTON_FONT.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
-            preset.put(BUTTON_FONT.BUTTON_TEXT_COLOR, new Color(0xB5, 0x88, 0x63));
-            preset.put(BUTTON_FONT.BUTTON_BG, new Color(0xF0, 0xD9, 0xB5));
+            preset.put(ControlStyle.BG, new Color(0x20, 0x20, 0x20));
+            preset.put(ControlStyle.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
+            preset.put(ControlStyle.BUTTON_TEXT_COLOR, new Color(0xB5, 0x88, 0x63));
+            preset.put(ControlStyle.BUTTON_BG, new Color(0xF0, 0xD9, 0xB5));
 
             preset.put(ProgressBarStyle.BAR_BG, Color.BLACK);
             preset.put(ProgressBarStyle.BAR_COLOR, Color.RED);
@@ -89,10 +89,10 @@ public class StyleSettings {
             preset.put(BoardStyle.LAST_MOVE_BORDER, new LineBorder(new Color(0x64, 0xBA, 0x2C), 4));
             preset.put(BoardStyle.BOARD_BG, new Color(0x6D, 0x8F, 0x5F));
 
-            preset.put(BUTTON_FONT.BG, new Color(0x24, 0x5E, 0x46));
-            preset.put(BUTTON_FONT.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
-            preset.put(BUTTON_FONT.BUTTON_TEXT_COLOR, new Color(0xEE, 0xEE, 0xD2));
-            preset.put(BUTTON_FONT.BUTTON_BG, new Color(0x76, 0x96, 0x56));
+            preset.put(ControlStyle.BG, new Color(0x24, 0x5E, 0x46));
+            preset.put(ControlStyle.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
+            preset.put(ControlStyle.BUTTON_TEXT_COLOR, new Color(0xEE, 0xEE, 0xD2));
+            preset.put(ControlStyle.BUTTON_BG, new Color(0x76, 0x96, 0x56));
 
             preset.put(ProgressBarStyle.BAR_BG, Color.BLACK);
             preset.put(ProgressBarStyle.BAR_COLOR, Color.RED);
@@ -113,10 +113,10 @@ public class StyleSettings {
             preset.put(BoardStyle.PIECE_COLOR, new Color(0x30, 0x30, 0x30));
             preset.put(BoardStyle.BOARD_BG, new Color(0xE2, 0xD8, 0xB7));
 
-            preset.put(BUTTON_FONT.BG, new Color(0x30, 0x30, 0x30));
-            preset.put(BUTTON_FONT.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
-            preset.put(BUTTON_FONT.BUTTON_TEXT_COLOR, new Color(0xF0, 0xD9, 0xB5));
-            preset.put(BUTTON_FONT.BUTTON_BG, new Color(0x58, 0x58, 0x58));
+            preset.put(ControlStyle.BG, new Color(0x30, 0x30, 0x30));
+            preset.put(ControlStyle.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
+            preset.put(ControlStyle.BUTTON_TEXT_COLOR, new Color(0xF0, 0xD9, 0xB5));
+            preset.put(ControlStyle.BUTTON_BG, new Color(0x58, 0x58, 0x58));
 
             preset.put(ProgressBarStyle.BAR_BG, Color.BLACK);
             preset.put(ProgressBarStyle.BAR_COLOR, Color.RED);
@@ -137,10 +137,10 @@ public class StyleSettings {
             preset.put(BoardStyle.PIECE_COLOR, new Color(0xEE, 0xEE, 0xEE));
             preset.put(BoardStyle.BOARD_BG, new Color(0x40, 0x30, 0x20));
 
-            preset.put(BUTTON_FONT.BG, new Color(0x10, 0x10, 0x10));
-            preset.put(BUTTON_FONT.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
-            preset.put(BUTTON_FONT.BUTTON_TEXT_COLOR, new Color(0xEE, 0xEE, 0xEE));
-            preset.put(BUTTON_FONT.BUTTON_BG, new Color(0x33, 0x33, 0x33));
+            preset.put(ControlStyle.BG, new Color(0x10, 0x10, 0x10));
+            preset.put(ControlStyle.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
+            preset.put(ControlStyle.BUTTON_TEXT_COLOR, new Color(0xEE, 0xEE, 0xEE));
+            preset.put(ControlStyle.BUTTON_BG, new Color(0x33, 0x33, 0x33));
 
             preset.put(ProgressBarStyle.BAR_BG, Color.BLACK);
             preset.put(ProgressBarStyle.BAR_COLOR, Color.RED);
@@ -161,10 +161,10 @@ public class StyleSettings {
             preset.put(BoardStyle.LAST_MOVE_BORDER, new LineBorder(new Color(0x00, 0xFF, 0xFF), 4));
             preset.put(BoardStyle.BOARD_BG, new Color(0x11, 0x11, 0x11));
 
-            preset.put(BUTTON_FONT.BG, Color.WHITE);
-            preset.put(BUTTON_FONT.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
-            preset.put(BUTTON_FONT.BUTTON_TEXT_COLOR, Color.BLACK);
-            preset.put(BUTTON_FONT.BUTTON_BG, new Color(0xFF, 0xFF, 0x00));
+            preset.put(ControlStyle.BG, Color.WHITE);
+            preset.put(ControlStyle.BUTTON_FONT, Style.CONTROL_BUTTONS_FONT);
+            preset.put(ControlStyle.BUTTON_TEXT_COLOR, Color.BLACK);
+            preset.put(ControlStyle.BUTTON_BG, new Color(0xFF, 0xFF, 0x00));
 
             preset.put(ProgressBarStyle.BAR_BG, Color.BLACK);
             preset.put(ProgressBarStyle.BAR_COLOR, Color.RED);
@@ -191,9 +191,9 @@ public class StyleSettings {
     }
 
     public static void applyControlButtonStyle(JButton btn) {
-        btn.setBackground(get(BUTTON_FONT.BUTTON_BG));
-        btn.setForeground(get(BUTTON_FONT.BUTTON_TEXT_COLOR));
-        btn.setFont(get(BUTTON_FONT.BUTTON_FONT));
+        btn.setBackground(get(ControlStyle.BUTTON_BG));
+        btn.setForeground(get(ControlStyle.BUTTON_TEXT_COLOR));
+        btn.setFont(get(ControlStyle.BUTTON_FONT));
         btn.setFocusPainted(false);
     }
 

@@ -1,9 +1,11 @@
 package com.chess.controller;
 
+import javax.swing.JButton;
 import javax.swing.JProgressBar;
 
 import com.chess.model.ChessModel;
 import com.chess.model.PieceColor;
+import com.chess.model.Square;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.MoveValidator;
 import com.chess.model.moves.PromotionMove;
@@ -12,6 +14,7 @@ import com.chess.player.BotPlayerMinimax;
 import com.chess.player.HumanPlayer;
 import com.chess.player.Player;
 import com.chess.view.GamePanel;
+import com.chess.view.MoveHistoryEntryComponent;
 import com.chess.view.ScreenManager;
 import com.chess.view.Screens;
 import com.chess.view.StyleSettings;
@@ -41,7 +44,7 @@ public class ChessController {
         if (current instanceof HumanPlayer)view.setSquareListener(this::onSquareClicked); 
         else view.setSquareListener((row, col) -> {System.out.println("disabled");});
         if (current != null) current.requestMove(model, (move) -> {
-            model.executeMove(move);
+            executeMove(move);
             view.refresh(model.getBoardSnapshot());
             if (MoveValidator.getLegalMovesForColor(model.getGameState()).isEmpty()) {
                 view.mate(model.getTurnColor().toString());
@@ -93,6 +96,7 @@ public class ChessController {
             case "Menu" -> {
                 if (whitePlayer instanceof BotPlayerMinimax) whitePlayer.cancel();
                 if (blackPlayer instanceof BotPlayerMinimax) blackPlayer.cancel();
+                
                 ScreenManager.showScreen(Screens.MENU);
             }
             case "ToggleStyle" -> {
@@ -126,6 +130,17 @@ public class ChessController {
         else {
             view.removeProgress();
         }
+    }
+
+    private void executeMove(Move move) {
+        model.executeMove(move);
+        Square from = move.getFrom();
+        Square to = move.getTo();
+        
+        JButton fromButton = view.getSquareButtons()[from.getRow()][from.getCol()];
+        JButton toButton = view.getSquareButtons()[to.getRow()][to.getCol()];
+
+        view.addMoveToHistory(new MoveHistoryEntryComponent(fromButton, toButton, move.toString()));
     }
 
 }
